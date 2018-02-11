@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace SE_B_Assignment1
         {
             InitializeComponent();
             plotGraph();
-            SetSize();
+           
         }
 
         private int[] buildTeamAData()
@@ -82,6 +83,40 @@ namespace SE_B_Assignment1
         private void Form1_Resize(object sender, EventArgs e)
         {
             SetSize();
+        }
+
+        private void LoadFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Show the dialog and get result.
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Open Text File";
+            ofd.Filter = "hrm|*.hrm";
+            ofd.InitialDirectory = @"C:\";
+            DialogResult result = ofd.ShowDialog();
+            if (result == DialogResult.OK) // Test result.
+            {
+                string[] lines = System.IO.File.ReadAllLines(ofd.FileName);
+                try
+                {
+                    List<string> HRData = File.ReadLines(ofd.FileName)
+                                               .SkipWhile(line => line != "[HRData]")
+                                               .Skip(1)
+                                               .ToList();
+
+                    List<string> Params = File.ReadLines(ofd.FileName)
+                           .Take(10).SkipWhile(line => line != "[Params]")
+                           .Skip(1)
+                           .ToList();
+
+
+                    MessageBox.Show(HRData[0]);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //error message on incorrect file types
+                }
+            }
         }
     }
 }
