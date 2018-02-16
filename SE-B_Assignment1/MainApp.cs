@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -80,8 +81,9 @@ namespace SE_B_Assignment1
             int[] Power = power.Select(int.Parse).ToArray();
             int[] PB = powerbalance.Select(int.Parse).ToArray();
 
-            for (int i = 0; i < Speed.Length; i++)
+            for (int i = 0; i < Speed.Length; i+=10)
             {
+                //int speed = Speed[i] / 10;
                 HRSpeed1.Add(i, Speed[i]);
                 HeartRate1.Add(i, HeartRate[i]);
                 Altitude1.Add(i, Altitude[i]);
@@ -125,7 +127,7 @@ namespace SE_B_Assignment1
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Open Text File";
             ofd.Filter = "hrm|*.hrm";
-            ofd.InitialDirectory = @"D:\Desktop\Work\Uni Last Year\Sem2\SE-B";
+            //ofd.InitialDirectory = @"D:\Desktop\Work\Uni Last Year\Sem2\SE-B";
             DialogResult result = ofd.ShowDialog();
             if (result == DialogResult.OK) // Test result.
             {
@@ -135,13 +137,24 @@ namespace SE_B_Assignment1
                     List<string> HRData = File.ReadLines(ofd.FileName)
                                                .SkipWhile(line => line != "[HRData]")
                                                .Skip(1)
+                                               .TakeWhile(line => line != "")
                                                .ToList();
 
                     List<string> Params = File.ReadLines(ofd.FileName)
-                           .Take(10).SkipWhile(line => line != "[Params]")
+                           .SkipWhile(line => line != "[Params]")
                            .Skip(1)
+                           .TakeWhile(line => line != "")
                            .ToList();
+                    listBox1.DataSource = Params;
 
+                    string DateFile = Params.Where(x => x.Contains("Date")).FirstOrDefault();
+                    string[] Date = DateFile.Split('=');
+
+                    string TimeFile = Params.Where(x => x.Contains("Start")).FirstOrDefault();
+                    string[] Time = TimeFile.Split('=');
+
+                    string DurationFile = Params.Where(x => x.Contains("Length")).FirstOrDefault();
+                    string[] Duration = DurationFile.Split('=');
 
                     string[] Splitter;
 
@@ -156,7 +169,14 @@ namespace SE_B_Assignment1
                         powerbalance.Add(Splitter[5]);
                         //MessageBox.Show(info13[0]);
                     }
-                    
+                    string DisplayDate = DateTime.ParseExact(Date[1], "yyyymmdd", CultureInfo.InvariantCulture).ToString("dd/mm/yyyy");
+                    DateOfFile.Text = DisplayDate;
+                    var StartTimeSpan = TimeSpan.ParseExact(Time[1], "c", System.Globalization.CultureInfo.InvariantCulture);
+                    StartTime.Text = StartTimeSpan.ToString();
+
+                    var EndTimeSpan = TimeSpan.ParseExact(Duration[1], "c", System.Globalization.CultureInfo.InvariantCulture);
+                    EndTimeSpan = StartTimeSpan.Add(EndTimeSpan);
+                    EndTime.Text = EndTimeSpan.ToString("hh\\:mm\\:ss");
 
                 }
                 catch (Exception)
