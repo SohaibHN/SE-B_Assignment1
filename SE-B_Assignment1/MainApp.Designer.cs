@@ -40,6 +40,10 @@
             this.StartTime = new System.Windows.Forms.Label();
             this.EndTime = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.MaxHR = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.MinHR = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,9 +92,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 43);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 13);
+            this.label1.Size = new System.Drawing.Size(74, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Date of File:";
+            this.label1.Text = "Date of Race:";
             // 
             // label2
             // 
@@ -142,11 +146,49 @@
             this.label5.TabIndex = 1006;
             this.label5.Text = "End Time:";
             // 
+            // MaxHR
+            // 
+            this.MaxHR.AutoSize = true;
+            this.MaxHR.Location = new System.Drawing.Point(85, 500);
+            this.MaxHR.Name = "MaxHR";
+            this.MaxHR.Size = new System.Drawing.Size(0, 13);
+            this.MaxHR.TabIndex = 1009;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(9, 500);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(73, 13);
+            this.label6.TabIndex = 1008;
+            this.label6.Text = "Maximum HR:";
+            // 
+            // MinHR
+            // 
+            this.MinHR.AutoSize = true;
+            this.MinHR.Location = new System.Drawing.Point(85, 525);
+            this.MinHR.Name = "MinHR";
+            this.MinHR.Size = new System.Drawing.Size(0, 13);
+            this.MinHR.TabIndex = 1011;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 525);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(70, 13);
+            this.label7.TabIndex = 1010;
+            this.label7.Text = "Minimum HR:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 652);
+            this.Controls.Add(this.MinHR);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.MaxHR);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.EndTime);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.StartTime);
@@ -160,6 +202,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Cycle Data Program";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -181,6 +224,10 @@
         private System.Windows.Forms.Label StartTime;
         private System.Windows.Forms.Label EndTime;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label MaxHR;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label MinHR;
+        private System.Windows.Forms.Label label7;
     }
 }
 
