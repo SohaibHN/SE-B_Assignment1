@@ -61,6 +61,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.AvgAlt = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -341,11 +342,19 @@
             this.label18.TabIndex = 1027;
             this.label18.Text = "Average Altitude:";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(185, 66);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 1031;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 652);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.MaxAlt);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.AvgAlt);
@@ -423,6 +432,7 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label AvgAlt;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

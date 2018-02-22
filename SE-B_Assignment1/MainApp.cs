@@ -30,7 +30,7 @@ namespace SE_B_Assignment1
         bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck;// and so on.
         TimeSpan start;
         TimeSpan end;
-
+        string stuff;
         DateTime starts;
 
         int interval;
