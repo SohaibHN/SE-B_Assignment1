@@ -32,6 +32,11 @@
             this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.HeartRateMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SpeedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CadenceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AltitudeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -61,7 +66,11 @@
             this.label14 = new System.Windows.Forms.Label();
             this.AvgAlt = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.MPHRadio = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.KMRadio = new System.Windows.Forms.RadioButton();
             this.menuStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // zedGraphControl1
@@ -82,7 +91,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadFileToolStripMenuItem});
+            this.loadFileToolStripMenuItem,
+            this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1182, 24);
@@ -95,6 +105,50 @@
             this.loadFileToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
             this.loadFileToolStripMenuItem.Text = "Load File";
             this.loadFileToolStripMenuItem.Click += new System.EventHandler(this.LoadFileToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.HeartRateMenuItem,
+            this.SpeedMenuItem,
+            this.CadenceMenuItem,
+            this.AltitudeMenuItem});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(96, 20);
+            this.toolStripMenuItem1.Text = "Graph Options";
+            // 
+            // HeartRateMenuItem
+            // 
+            this.HeartRateMenuItem.Checked = true;
+            this.HeartRateMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.HeartRateMenuItem.Name = "HeartRateMenuItem";
+            this.HeartRateMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.HeartRateMenuItem.Text = "Heart Rate";
+            this.HeartRateMenuItem.Click += new System.EventHandler(this.HeartRateMenuItem_Click);
+            // 
+            // SpeedMenuItem
+            // 
+            this.SpeedMenuItem.Checked = true;
+            this.SpeedMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SpeedMenuItem.Name = "SpeedMenuItem";
+            this.SpeedMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SpeedMenuItem.Text = "Speed";
+            // 
+            // CadenceMenuItem
+            // 
+            this.CadenceMenuItem.Checked = true;
+            this.CadenceMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CadenceMenuItem.Name = "CadenceMenuItem";
+            this.CadenceMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.CadenceMenuItem.Text = "Cadence";
+            // 
+            // AltitudeMenuItem
+            // 
+            this.AltitudeMenuItem.Checked = true;
+            this.AltitudeMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AltitudeMenuItem.Name = "AltitudeMenuItem";
+            this.AltitudeMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.AltitudeMenuItem.Text = "Altitude";
             // 
             // listBox1
             // 
@@ -341,11 +395,46 @@
             this.label18.TabIndex = 1027;
             this.label18.Text = "Average Altitude:";
             // 
+            // MPHRadio
+            // 
+            this.MPHRadio.AutoSize = true;
+            this.MPHRadio.Location = new System.Drawing.Point(9, 16);
+            this.MPHRadio.Name = "MPHRadio";
+            this.MPHRadio.Size = new System.Drawing.Size(73, 17);
+            this.MPHRadio.TabIndex = 1031;
+            this.MPHRadio.TabStop = true;
+            this.MPHRadio.Text = "US (MPH)";
+            this.MPHRadio.UseVisualStyleBackColor = true;
+            this.MPHRadio.CheckedChanged += new System.EventHandler(this.MPHRadio_CheckedChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.KMRadio);
+            this.groupBox1.Controls.Add(this.MPHRadio);
+            this.groupBox1.Location = new System.Drawing.Point(755, 43);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(91, 58);
+            this.groupBox1.TabIndex = 1032;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Format";
+            // 
+            // KMRadio
+            // 
+            this.KMRadio.AutoSize = true;
+            this.KMRadio.Location = new System.Drawing.Point(9, 35);
+            this.KMRadio.Name = "KMRadio";
+            this.KMRadio.Size = new System.Drawing.Size(78, 17);
+            this.KMRadio.TabIndex = 1032;
+            this.KMRadio.TabStop = true;
+            this.KMRadio.Text = "EU (KM/H)";
+            this.KMRadio.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 652);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.MaxAlt);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.AvgAlt);
@@ -384,6 +473,8 @@
             this.SizeChanged += new System.EventHandler(this.Form1_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -423,6 +514,14 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label AvgAlt;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.RadioButton MPHRadio;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton KMRadio;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem HeartRateMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SpeedMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CadenceMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AltitudeMenuItem;
     }
 }
 

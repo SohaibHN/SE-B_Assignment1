@@ -27,18 +27,189 @@ namespace SE_B_Assignment1
         List<string> altitude = new List<string>();
         List<string> power = new List<string>();
         List<string> powerbalance = new List<string>();
-        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck;// and so on.
+        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck;
         TimeSpan start;
         TimeSpan end;
 
-        DateTime starts;
-
+        public int[] Speed;
+        public int[] HeartRate;
+        public int[] Altitude;
+        public int[] Cadeance;
+        public int[] Power;
         int interval;
 
         public Form1()
         {
             InitializeComponent();
-           
+            MPHRadio.CheckedChanged += new EventHandler(SpeedFormat);
+            KMRadio.CheckedChanged += new EventHandler(SpeedFormat);
+
+        }
+
+        private void SpeedFormat(object sender, EventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+            int curveIndex = zedGraphControl1.GraphPane.CurveList.IndexOf("Speed");
+
+            if (curveIndex != -1) // makes sure speed exists
+            {
+                zedGraphControl1.GraphPane.CurveList.RemoveAt(curveIndex);
+                zedGraphControl1.Refresh();
+
+            }
+            if (MPHRadio.Checked)
+            {
+                if (UnitCheck)
+                {
+                    double MaxSpd = Speed.Max() / 10;
+                    MaxSpeed.Text = MaxSpd.ToString("N0") + " MPH";
+                    double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
+                    AvgSpeed.Text = AverageSpeed.ToString("N0") + " MPH";
+                    double distance = AverageSpeed * end.TotalHours;
+                    Distance.Text = distance.ToString("N") + " Miles";
+
+                    PointPairList HRSpeed1 = new PointPairList();
+                    for (int i = 0; i < Speed.Length; i += 5)
+                    {
+                        if (HRCheck)
+                        {
+                            double speed = Speed[i] / 10;
+                            //interval = interval + i;
+                            HRSpeed1.Add(i, speed);
+                        }
+
+                    }
+                    LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                    HRSpeed1, Color.Red, SymbolType.None);
+                }
+                else
+                {
+                    double MaxSpd = Speed.Max() / 10;
+                    MaxSpd = ConvertKilometersToMiles(MaxSpd);
+                    MaxSpeed.Text = MaxSpd.ToString("N0") + " MPH";
+
+                    double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
+                    AverageSpeed = ConvertKilometersToMiles(AverageSpeed);
+                    AvgSpeed.Text = AverageSpeed.ToString("N0") + " MPH";
+
+                    double distance = AverageSpeed * end.TotalHours;
+                    Distance.Text = distance.ToString("N") + " Miles";
+
+                    PointPairList HRSpeed1 = new PointPairList();
+                    for (int i = 0; i < Speed.Length; i += 5)
+                    {
+                        if (HRCheck)
+                        {
+                            double speed = Speed[i] / 10;
+                            speed = ConvertKilometersToMiles(speed);
+                            //interval = interval + i;
+                            HRSpeed1.Add(i, speed);
+                        }
+
+                    }
+                    LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                    HRSpeed1, Color.Red, SymbolType.None);
+                }
+            }
+            else if (KMRadio.Checked)
+            {
+                if (!UnitCheck)
+                {
+                    double MaxSpd = Speed.Max() / 10;
+                    MaxSpeed.Text = MaxSpd.ToString("N0") + " KM/H";
+                    double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
+                    AvgSpeed.Text = AverageSpeed.ToString("N0") + " KM/H";
+                    double distance = AverageSpeed * end.TotalHours;
+                    Distance.Text = distance.ToString("N0") + " KM";
+
+                    PointPairList HRSpeed1 = new PointPairList();
+                    for (int i = 0; i < Speed.Length; i += 5)
+                    {
+                        if (HRCheck)
+                        {
+                            double speed = Speed[i] / 10;
+                            //interval = interval + i;
+                            HRSpeed1.Add(i, speed);
+                        }
+
+                    }
+                    LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                    HRSpeed1, Color.Red, SymbolType.None);
+                }
+                else
+                {
+                    double MaxSpd = Speed.Max() / 10;
+                    MaxSpd = ConvertMilesToKilometers(MaxSpd);
+                    MaxSpeed.Text = MaxSpd.ToString("N0") + " KM/H";
+
+                    double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
+                    AverageSpeed = ConvertMilesToKilometers(AverageSpeed);
+                    AvgSpeed.Text = AverageSpeed.ToString("N0") + " KM/H";
+
+                    double distance = AverageSpeed * end.TotalHours;
+                    Distance.Text = distance.ToString("N") + " KM";
+
+                    PointPairList HRSpeed1 = new PointPairList();
+                    for (int i = 0; i < Speed.Length; i += 5)
+                    {
+                        if (HRCheck)
+                        {
+                            double speed = Speed[i] / 10;
+                            speed = ConvertMilesToKilometers(speed);
+                            //interval = interval + i;
+                            HRSpeed1.Add(i, speed);
+                        }
+
+                    }
+                    LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                    HRSpeed1, Color.Red, SymbolType.None);
+                }
+            }
+            zedGraphControl1.Refresh();
+        }
+
+        public static double ConvertMilesToKilometers(double miles)
+        {
+            //
+            // Multiply by this constant and return the result.
+            //
+            return miles * 1.609344;
+        }
+
+        public static double ConvertKilometersToMiles(double kilometers)
+        {
+            //
+            // Multiply by this constant.
+            //
+            return kilometers * 0.621371192;
+        }
+
+        private void MPHRadio_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void HeartRateMenuItem_Click(object sender, EventArgs e)
+        {
+            if (HeartRateMenuItem.Checked == true)
+            {
+                MessageBox.Show("TRUE - SETTING TO FALSE");
+                HeartRateMenuItem.Checked = false;
+                int curveIndex = zedGraphControl1.GraphPane.CurveList.IndexOf("Heart Rate");
+
+                if (curveIndex != -1) // makes sure speed exists
+                {
+                    zedGraphControl1.GraphPane.CurveList.RemoveAt(curveIndex);
+                }
+                
+
+            }
+            else if (HeartRateMenuItem.Checked == false)
+            {
+                MessageBox.Show("FALSE - SETTING TO TRUE");
+                HeartRateMenuItem.Checked = true;
+            }
+            zedGraphControl1.Refresh();
         }
 
         private void plotGraph()
@@ -53,12 +224,11 @@ namespace SE_B_Assignment1
             myPane.XAxis.Title.Text = "Time (in Seconds)";
             myPane.XAxis.Scale.MinorStep = interval;
             myPane.XAxis.Scale.MajorStep = interval * 5;
+           // interval = interval * 5;
+           // MessageBox.Show(interval.ToString());
             string type;
             string type2;
-            if (UnitCheck) { type = " km/h"; type2 = " km"; }
-            else { type = " mph"; type2 = " miles"; }
-                
-            
+
             /* myPane.XAxis.Scale.MajorStep = 50;
              myPane.YAxis.Scale.Mag = 0;
              myPane.XAxis.Scale.Max = 1000;*/
@@ -69,54 +239,75 @@ namespace SE_B_Assignment1
             PointPairList Altitude1 = new PointPairList();
             PointPairList Power1 = new PointPairList();
 
-            int[] Speed = HRSpeed.Select(int.Parse).ToArray();
-            int[] HeartRate = heartrate.Select(int.Parse).ToArray();
-            int[] Altitude = altitude.Select(int.Parse).ToArray();
-            int[] Cadeance = cadence.Select(int.Parse).ToArray();
-            int[] Power = power.Select(int.Parse).ToArray();
+            Speed = HRSpeed.Select(int.Parse).ToArray();
+            HeartRate = heartrate.Select(int.Parse).ToArray();
+            Altitude = altitude.Select(int.Parse).ToArray();
+            Cadeance = cadence.Select(int.Parse).ToArray();
+            Power = power.Select(int.Parse).ToArray();
 
-            for (int i = 0; i < Speed.Length; i += 15)
+            for (int i = 0; i < HeartRate.Length; i++)
             {
-                int speed = Speed[i] / 10;
-                //interval = interval + i;
-                HRSpeed1.Add(i, speed);
-                HeartRate1.Add(i, HeartRate[i]);
-                Altitude1.Add(i, Altitude[i]);
-                Cadeance1.Add(i, Cadeance[i]);
-                Power1.Add(i, Power[i]);
+                if (!HRCheck)
+                {
+                    HeartRate1.Add(i, HeartRate[i]);
+                }
+                else
+                {
+                    int speed = Speed[i] / 10;
+                    //interval = interval + i;
+                    HRSpeed1.Add(i, speed);
+                    HeartRate1.Add(i, HeartRate[i]);
+                    Altitude1.Add(i, Altitude[i]);
+                    Cadeance1.Add(i, Cadeance[i]);
+                    Power1.Add(i, Power[i]);
+                }
             }
             MaxHR.Text = HeartRate.Max().ToString();
             MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString();
             BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0");
 
-            double MaxSpd = Speed.Max() / 10;
-            MaxSpeed.Text = MaxSpd.ToString("N0") + type;
-            double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
-            AvgSpeed.Text = AverageSpeed.ToString("N0") + type;
-            double distance = AverageSpeed * end.TotalHours;
+            if (!UnitCheck)
+            {
+                type = " KM/H"; type2 = " KM";
+                this.KMRadio.Checked = true;
+            }
+            else
+            {
+                type = " MPH"; type2 = " Miles";
+                this.MPHRadio.Checked = true;
+            }
 
-            MaxPower.Text = Power.Max().ToString();
-            AvgPower.Text = Power.Average().ToString("N0");
+            if (HRCheck)
+            {
+                double MaxSpd = Speed.Max() / 10;
+                MaxSpeed.Text = MaxSpd.ToString("N0") + type;
+                double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
+                AvgSpeed.Text = AverageSpeed.ToString("N0") + type;
+                double distance = AverageSpeed * end.TotalHours;
+                Distance.Text = distance.ToString("N") + type2;
 
-            MaxAlt.Text = Altitude.Max().ToString();
-            AvgAlt.Text = Altitude.Where(f => f > 0).Average().ToString("N0");
+                MaxPower.Text = Power.Max().ToString();
+                AvgPower.Text = Power.Average().ToString("N0");
+
+                MaxAlt.Text = Altitude.Max().ToString();
+                AvgAlt.Text = Altitude.Where(f => f > 0).Average().ToString("N0");
 
 
-            Distance.Text = distance.ToString("N0") + type2;
+            }
             LineItem HeartRateCurve = myPane.AddCurve("Heart Rate",
-                HeartRate1, Color.Blue, SymbolType.Circle);
+                HeartRate1, Color.Blue, SymbolType.None);
 
             LineItem AltitudeCurve = myPane.AddCurve("Altitude",
-                Altitude1, Color.Green, SymbolType.Diamond);
+                Altitude1, Color.Green, SymbolType.None);
 
-            LineItem SpeedCurve = myPane.AddCurve("Speed",
-                   HRSpeed1, Color.Red, SymbolType.Diamond);
+            //LineItem SpeedCurve = myPane.AddCurve("Speed",
+               //    HRSpeed1, Color.Red, SymbolType.None);
 
             LineItem CadenceCurve = myPane.AddCurve("Cadence",
-                Cadeance1, Color.Purple, SymbolType.Diamond);
+                Cadeance1, Color.Purple, SymbolType.None);
 
             LineItem PowerCurve = myPane.AddCurve("Power",
-                Power1, Color.Orange, SymbolType.Diamond);
+                Power1, Color.Orange, SymbolType.None);
             //SpeedCurve.Line.IsVisible = false;
 
 
@@ -171,6 +362,10 @@ namespace SE_B_Assignment1
                 PowerPedalCheck = true;
             }
             if (FullSMode[6] == '1')
+            {
+                HRCheck = true;
+            }
+            if (FullSMode[7] == '1')
             {
                 UnitCheck = true;
             }
@@ -233,23 +428,35 @@ namespace SE_B_Assignment1
                     interval = Int32.Parse(Interval[1]);
 
                     string[] Splitter;
-
-                    foreach (var one in HRData)
+                    if (!HRCheck)
                     {
-                        Splitter = one.Split('\t');
-                        heartrate.Add(Splitter[0]);
-                        HRSpeed.Add(Splitter[1]);
-                        cadence.Add(Splitter[2]);
-                        altitude.Add(Splitter[3]);
-                        power.Add(Splitter[4]);
-                        powerbalance.Add(Splitter[5]);
-                        //MessageBox.Show(info13[0]);
+                        foreach (var one in HRData)
+                        {
+                            Splitter = one.Split('\t');
+                            heartrate.Add(Splitter[0]);
+                        }
+                    }
 
+                    else
+                    {
+
+                        foreach (var one in HRData)
+                        {
+                            Splitter = one.Split('\t');
+                            heartrate.Add(Splitter[0]);
+                            HRSpeed.Add(Splitter[1]);
+                            cadence.Add(Splitter[2]);
+                            altitude.Add(Splitter[3]);
+                            power.Add(Splitter[4]);
+                            //powerbalance.Add(Splitter[5]);
+                            //MessageBox.Show(info13[0]);
+
+                        }
                     }
                     string DisplayDate = DateTime.ParseExact(Date[1], "yyyymmdd", CultureInfo.InvariantCulture).ToString("dd/mm/yyyy");
                     DateOfFile.Text = DisplayDate;
                     var StartTimeSpan = TimeSpan.ParseExact(Time[1], "c", System.Globalization.CultureInfo.InvariantCulture);
-                    StartTime.Text = StartTimeSpan.ToString();
+                    StartTime.Text = StartTimeSpan.ToString("hh\\:mm\\:ss");
 
                     var EndTimeSpan = TimeSpan.ParseExact(Duration[1], "c", System.Globalization.CultureInfo.InvariantCulture);
                     end = EndTimeSpan;
