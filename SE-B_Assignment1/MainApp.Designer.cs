@@ -69,6 +69,7 @@
             this.MPHRadio = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.KMRadio = new System.Windows.Forms.RadioButton();
+            this.PowerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -112,7 +113,8 @@
             this.HeartRateMenuItem,
             this.SpeedMenuItem,
             this.CadenceMenuItem,
-            this.AltitudeMenuItem});
+            this.AltitudeMenuItem,
+            this.PowerMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(96, 20);
             this.toolStripMenuItem1.Text = "Graph Options";
@@ -133,6 +135,7 @@
             this.SpeedMenuItem.Name = "SpeedMenuItem";
             this.SpeedMenuItem.Size = new System.Drawing.Size(152, 22);
             this.SpeedMenuItem.Text = "Speed";
+            this.SpeedMenuItem.Click += new System.EventHandler(this.SpeedMenuItem_Click);
             // 
             // CadenceMenuItem
             // 
@@ -141,6 +144,7 @@
             this.CadenceMenuItem.Name = "CadenceMenuItem";
             this.CadenceMenuItem.Size = new System.Drawing.Size(152, 22);
             this.CadenceMenuItem.Text = "Cadence";
+            this.CadenceMenuItem.Click += new System.EventHandler(this.CadenceMenuItem_Click);
             // 
             // AltitudeMenuItem
             // 
@@ -149,6 +153,7 @@
             this.AltitudeMenuItem.Name = "AltitudeMenuItem";
             this.AltitudeMenuItem.Size = new System.Drawing.Size(152, 22);
             this.AltitudeMenuItem.Text = "Altitude";
+            this.AltitudeMenuItem.Click += new System.EventHandler(this.AltitudeMenuItem_Click);
             // 
             // listBox1
             // 
@@ -405,7 +410,6 @@
             this.MPHRadio.TabStop = true;
             this.MPHRadio.Text = "US (MPH)";
             this.MPHRadio.UseVisualStyleBackColor = true;
-            this.MPHRadio.CheckedChanged += new System.EventHandler(this.MPHRadio_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -428,6 +432,15 @@
             this.KMRadio.TabStop = true;
             this.KMRadio.Text = "EU (KM/H)";
             this.KMRadio.UseVisualStyleBackColor = true;
+            // 
+            // PowerMenuItem
+            // 
+            this.PowerMenuItem.Checked = true;
+            this.PowerMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PowerMenuItem.Name = "PowerMenuItem";
+            this.PowerMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.PowerMenuItem.Text = "Power";
+            this.PowerMenuItem.Click += new System.EventHandler(this.PowerMenuItem_Click);
             // 
             // Form1
             // 
@@ -522,6 +535,7 @@
         private System.Windows.Forms.ToolStripMenuItem SpeedMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CadenceMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AltitudeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem PowerMenuItem;
     }
 }
 
