@@ -27,7 +27,7 @@ namespace SE_B_Assignment1
         List<string> altitude = new List<string>();
         List<string> power = new List<string>();
         List<string> powerbalance = new List<string>();
-        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded;
+        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, HRMenu, SpeedMenu, CadenceMenu, AltMenu, PowerMenu;
         TimeSpan start;
         TimeSpan end;
 
@@ -49,6 +49,11 @@ namespace SE_B_Assignment1
         private void SpeedFormat(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
+            SpeedPlot();
+        }
+
+        private void SpeedPlot()
+        {
             if (FileLoaded) // doesn't do anything until a file is loaded in
             {
                 if (HRCheck)
@@ -83,8 +88,11 @@ namespace SE_B_Assignment1
                                 }
 
                             }
-                            LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
-                            HRSpeed1, Color.Red, SymbolType.None);
+                            if (SpeedCheck)
+                            {
+                                LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                                HRSpeed1, Color.Red, SymbolType.None);
+                            }
                         }
                         else
                         {
@@ -111,8 +119,11 @@ namespace SE_B_Assignment1
                                 }
 
                             }
-                            LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
-                            HRSpeed1, Color.Red, SymbolType.None);
+                            if (SpeedCheck)
+                            {
+                                LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                                HRSpeed1, Color.Red, SymbolType.None);
+                            }
                         }
                     }
                     else if (KMRadio.Checked)
@@ -137,8 +148,11 @@ namespace SE_B_Assignment1
                                 }
 
                             }
-                            LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
-                            HRSpeed1, Color.Red, SymbolType.None);
+                            if (SpeedCheck)
+                            {
+                                LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                                HRSpeed1, Color.Red, SymbolType.None);
+                            }
                         }
                         else
                         {
@@ -165,8 +179,11 @@ namespace SE_B_Assignment1
                                 }
 
                             }
-                            LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
-                            HRSpeed1, Color.Red, SymbolType.None);
+                            if (SpeedCheck)
+                            {
+                                LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                                HRSpeed1, Color.Red, SymbolType.None);
+                            }
                         }
                     }
                     zedGraphControl1.Refresh();
@@ -206,20 +223,11 @@ namespace SE_B_Assignment1
                         zedGraphControl1.GraphPane.CurveList.RemoveAt(curveIndex);
                     }
 
-
                 }
                 else if (HeartRateMenuItem.Checked == false)
                 {
                     HeartRateMenuItem.Checked = true;
-
-                    PointPairList HeartRate1 = new PointPairList();
-                    for (int i = 0; i < HeartRate.Length; i++)
-                    {
-                        HeartRate1.Add(i, HeartRate[i]);
-                    }
-
-                    LineItem HeartRateCurve = zedGraphControl1.GraphPane.AddCurve("Heart Rate",
-                    HeartRate1, Color.Blue, SymbolType.None);
+                    PlotGraph();
                 }
                 zedGraphControl1.Refresh();
             }
@@ -239,12 +247,27 @@ namespace SE_B_Assignment1
                         zedGraphControl1.GraphPane.CurveList.RemoveAt(curveIndex);
                     }
 
+                    if (MPHRadio.Checked)
+                    {
+                        MPHRadio.Checked = false;
+                    }
+                    else if (KMRadio.Checked)
+                    {
+                        KMRadio.Checked = false;
+                    }
 
                 }
                 else if (SpeedMenuItem.Checked == false)
                 {
                     SpeedMenuItem.Checked = true;
-
+                    if (!UnitCheck)
+                    {
+                        this.KMRadio.Checked = true;
+                    }
+                    else
+                    {
+                        this.MPHRadio.Checked = true;
+                    }/*
                     PointPairList HRSpeed1 = new PointPairList();
                     for (int i = 0; i < Speed.Length; i++)
                     {
@@ -257,16 +280,7 @@ namespace SE_B_Assignment1
 
                     }
                     LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
-                    HRSpeed1, Color.Red, SymbolType.None);
-
-                    if (!UnitCheck)
-                    {
-                        this.KMRadio.Checked = true;
-                    }
-                    else
-                    {
-                        this.MPHRadio.Checked = true;
-                    }
+                    HRSpeed1, Color.Red, SymbolType.None); */
                 }
                 zedGraphControl1.Refresh();
 
@@ -286,14 +300,14 @@ namespace SE_B_Assignment1
                     {
                         zedGraphControl1.GraphPane.CurveList.RemoveAt(curveIndex);
                     }
-
+                    zedGraphControl1.Refresh();
 
                 }
                 else if (CadenceMenuItem.Checked == false)
                 {
                     CadenceMenuItem.Checked = true;
-
-                    PointPairList Cadence1 = new PointPairList();
+                    PlotGraph();
+                    /*PointPairList Cadence1 = new PointPairList();
                     for (int i = 0; i < Cadeance.Length; i++)
                     {
                         if (HRCheck)
@@ -303,9 +317,8 @@ namespace SE_B_Assignment1
                     }
 
                     LineItem CadenceCurve = zedGraphControl1.GraphPane.AddCurve("Cadence",
-                    Cadence1, Color.Purple, SymbolType.None);
+                    Cadence1, Color.Purple, SymbolType.None); */
                 }
-                zedGraphControl1.Refresh();
             }
         }
 
@@ -328,18 +341,7 @@ namespace SE_B_Assignment1
                 else if (AltitudeMenuItem.Checked == false)
                 {
                     AltitudeMenuItem.Checked = true;
-
-                    PointPairList Altitude1 = new PointPairList();
-                    for (int i = 0; i < Altitude.Length; i++)
-                    {
-                        if (HRCheck)
-                        {
-                            Altitude1.Add(i, Altitude[i]);
-                        }
-                    }
-
-                    LineItem AltitudeCurve = zedGraphControl1.GraphPane.AddCurve("Altitude",
-                    Altitude1, Color.Green, SymbolType.None);
+                    PlotGraph();
                 }
                 zedGraphControl1.Refresh();
             }
@@ -358,21 +360,11 @@ namespace SE_B_Assignment1
                     {
                         zedGraphControl1.GraphPane.CurveList.RemoveAt(curveIndex);
                     }
-
-
                 }
                 else if (PowerMenuItem.Checked == false)
                 {
                     PowerMenuItem.Checked = true;
-
-                    PointPairList Power1 = new PointPairList();
-                    for (int i = 0; i < Power.Length; i++)
-                    {
-                        Power1.Add(i, Power[i]);
-                    }
-
-                    LineItem PowerCurve = zedGraphControl1.GraphPane.AddCurve("Power",
-                    Power1, Color.Orange, SymbolType.None);
+                    PlotGraph();
                 }
                 zedGraphControl1.Refresh();
             }
@@ -411,7 +403,7 @@ namespace SE_B_Assignment1
             Altitude = altitude.Select(int.Parse).ToArray();
             Cadeance = cadence.Select(int.Parse).ToArray();
             Power = power.Select(int.Parse).ToArray();
-
+            //Power = Enumerable.Range(0, 10).ToArray();
             for (int i = 0; i < HeartRate.Length; i++)
             {
                 if (!HRCheck)
@@ -461,21 +453,37 @@ namespace SE_B_Assignment1
 
 
             }
-            LineItem HeartRateCurve = myPane.AddCurve("Heart Rate",
+
+
+            if (HeartRateMenuItem.Checked)
+            {
+                LineItem HeartRateCurve = myPane.AddCurve("Heart Rate",
                 HeartRate1, Color.Blue, SymbolType.None);
+            }
 
-            LineItem AltitudeCurve = myPane.AddCurve("Altitude",
+            if (SpeedMenuItem.Checked)
+            {
+                SpeedPlot();
+            }
+
+            if (AltitudeMenuItem.Checked)
+            {
+                LineItem AltitudeCurve = myPane.AddCurve("Altitude",
                 Altitude1, Color.Green, SymbolType.None);
-
+            }
             //LineItem SpeedCurve = myPane.AddCurve("Speed",
             //    HRSpeed1, Color.Red, SymbolType.None);
 
-            LineItem CadenceCurve = myPane.AddCurve("Cadence",
-                Cadeance1, Color.Purple, SymbolType.None);
-
-            LineItem PowerCurve = myPane.AddCurve("Power",
-                Power1, Color.Orange, SymbolType.None);
-            //SpeedCurve.Line.IsVisible = false;
+            if (CadenceMenuItem.Checked)
+            {
+                LineItem CadenceCurve = myPane.AddCurve("Cadence",
+                  Cadeance1, Color.Purple, SymbolType.None);
+            }
+            if (PowerMenuItem.Checked)
+            {
+                LineItem PowerCurve = myPane.AddCurve("Power",
+                  Power1, Color.Orange, SymbolType.None);
+            }//SpeedCurve.Line.IsVisible = false;
 
 
             zedGraphControl1.AxisChange();
@@ -504,21 +512,34 @@ namespace SE_B_Assignment1
 
         public void SModeCheck(char[] FullSMode)
         {
+            if (FullSMode[6] == '1')
+            {
+                HRCheck = true;
+                SpeedMenuItem.Checked = true; PowerMenuItem.Checked = true; CadenceMenuItem.Checked = true; AltitudeMenuItem.Checked = true;
+            }
+            else
+            {
+                SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = false;
+            }
             if (FullSMode[0] == '1')
             {
-                SpeedCheck = true;
+                SpeedCheck = true; SpeedMenuItem.Checked = true;
+            }
+            else
+            {
+                SpeedMenuItem.Checked = false;
             }
             if (FullSMode[1] == '1')
             {
-                CadenceCheck = true;
+                CadenceCheck = true; CadenceMenuItem.Checked = true;
             }
             if (FullSMode[2] == '1')
             {
-                AltCheck = true;
+                AltCheck = true; AltitudeMenuItem.Checked = true;
             }
             if (FullSMode[3] == '1')
             {
-                PowerCheck = true;
+                PowerCheck = true; PowerMenuItem.Checked = true;
             }
             if (FullSMode[4] == '1')
             {
@@ -527,10 +548,6 @@ namespace SE_B_Assignment1
             if (FullSMode[5] == '1')
             {
                 PowerPedalCheck = true;
-            }
-            if (FullSMode[6] == '1')
-            {
-                HRCheck = true;
             }
             if (FullSMode[7] == '1')
             {
@@ -655,7 +672,30 @@ namespace SE_B_Assignment1
                     return;
                 }
                 PlotGraph();
+                DataGridViewPlot();
             }
+        }
+
+        private void DataGridViewPlot()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Interval Time (Seconds)");
+            dt.Columns.Add("HeartRate");
+            dt.Columns.Add("Speed");
+            dt.Columns.Add("Cadence");
+            int timer = interval;
+            foreach (var item in HeartRate)
+            {
+                DataRow dr = dt.NewRow();             
+                dr["HeartRate"] = item;
+                dr["Interval Time (Seconds)"] = timer;
+                dt.Rows.Add(dr);
+                timer = interval + timer;
+            }
+ 
+
+
+            dataGridView1.DataSource = dt;
         }
 
         private void Form1_Load(object sender, EventArgs e)

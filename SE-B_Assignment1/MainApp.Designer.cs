@@ -37,6 +37,7 @@
             this.SpeedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CadenceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AltitudeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.PowerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -69,9 +70,10 @@
             this.MPHRadio = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.KMRadio = new System.Windows.Forms.RadioButton();
-            this.PowerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // zedGraphControl1
@@ -130,8 +132,6 @@
             // 
             // SpeedMenuItem
             // 
-            this.SpeedMenuItem.Checked = true;
-            this.SpeedMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SpeedMenuItem.Name = "SpeedMenuItem";
             this.SpeedMenuItem.Size = new System.Drawing.Size(152, 22);
             this.SpeedMenuItem.Text = "Speed";
@@ -139,8 +139,6 @@
             // 
             // CadenceMenuItem
             // 
-            this.CadenceMenuItem.Checked = true;
-            this.CadenceMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CadenceMenuItem.Name = "CadenceMenuItem";
             this.CadenceMenuItem.Size = new System.Drawing.Size(152, 22);
             this.CadenceMenuItem.Text = "Cadence";
@@ -148,12 +146,17 @@
             // 
             // AltitudeMenuItem
             // 
-            this.AltitudeMenuItem.Checked = true;
-            this.AltitudeMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.AltitudeMenuItem.Name = "AltitudeMenuItem";
             this.AltitudeMenuItem.Size = new System.Drawing.Size(152, 22);
             this.AltitudeMenuItem.Text = "Altitude";
             this.AltitudeMenuItem.Click += new System.EventHandler(this.AltitudeMenuItem_Click);
+            // 
+            // PowerMenuItem
+            // 
+            this.PowerMenuItem.Name = "PowerMenuItem";
+            this.PowerMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.PowerMenuItem.Text = "Power";
+            this.PowerMenuItem.Click += new System.EventHandler(this.PowerMenuItem_Click);
             // 
             // listBox1
             // 
@@ -433,20 +436,20 @@
             this.KMRadio.Text = "EU (KM/H)";
             this.KMRadio.UseVisualStyleBackColor = true;
             // 
-            // PowerMenuItem
+            // dataGridView1
             // 
-            this.PowerMenuItem.Checked = true;
-            this.PowerMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.PowerMenuItem.Name = "PowerMenuItem";
-            this.PowerMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.PowerMenuItem.Text = "Power";
-            this.PowerMenuItem.Click += new System.EventHandler(this.PowerMenuItem_Click);
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(852, 109);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(318, 390);
+            this.dataGridView1.TabIndex = 1033;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 652);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.MaxAlt);
             this.Controls.Add(this.label14);
@@ -488,6 +491,7 @@
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -536,6 +540,7 @@
         private System.Windows.Forms.ToolStripMenuItem CadenceMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AltitudeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PowerMenuItem;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 
