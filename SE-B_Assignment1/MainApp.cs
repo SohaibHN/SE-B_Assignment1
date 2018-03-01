@@ -27,7 +27,7 @@ namespace SE_B_Assignment1
         List<string> altitude = new List<string>();
         List<string> power = new List<string>();
         List<string> powerbalance = new List<string>();
-        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, HRMenu, SpeedMenu, CadenceMenu, AltMenu, PowerMenu;
+        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck;
         TimeSpan start;
         TimeSpan end;
 
@@ -233,6 +233,11 @@ namespace SE_B_Assignment1
             }
         }
 
+        private void HRUserInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void SpeedMenuItem_Click(object sender, EventArgs e)
         {
             if (FileLoaded) // doesn't do anything until a file is loaded in
@@ -412,32 +417,56 @@ namespace SE_B_Assignment1
                 }
                 else
                 {
-                    int speed = Speed[i] / 10;
-                    //interval = interval + i;
-                    HRSpeed1.Add(i, speed);
                     HeartRate1.Add(i, HeartRate[i]);
-                    Altitude1.Add(i, Altitude[i]);
-                    Cadeance1.Add(i, Cadeance[i]);
-                    Power1.Add(i, Power[i]);
+                    if (SpeedCheck)
+                    {
+                      int speed = Speed[i] / 10;
+                        //interval = interval + i;
+                        HRSpeed1.Add(i, speed);
+                    }
+                    if (CadenceCheck)
+                    {
+                        Cadeance1.Add(i, Cadeance[i]);
+                    }
+                    if (AltCheck)
+                    {
+                        Altitude1.Add(i, Altitude[i]);
+                    }
+                    if (PowerCheck)
+                    {
+                        Power1.Add(i, Power[i]);
+                    }
                 }
-            }
+
+            }          
+            
             MaxHR.Text = HeartRate.Max().ToString();
             MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString();
             BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0");
 
-            if (!UnitCheck)
+            if (SpeedMenuItem.Checked == true)
             {
-                type = " KM/H"; type2 = " KM";
-                this.KMRadio.Checked = true;
-            }
-            else
-            {
-                type = " MPH"; type2 = " Miles";
-                this.MPHRadio.Checked = true;
+                if (!UnitCheck)
+                {
+                    this.KMRadio.Checked = true;
+                }
+                else
+                {
+                    this.MPHRadio.Checked = true;
+                }
             }
 
             if (HRCheck)
             {
+                if (!UnitCheck)
+                {
+                    type = " KM/H"; type2 = " KM";
+                }
+                else
+                {
+                    type = " MPH"; type2 = " Miles";
+                }
+
                 double MaxSpd = Speed.Max() / 10;
                 MaxSpeed.Text = MaxSpd.ToString("N0") + type;
                 double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
@@ -445,11 +474,14 @@ namespace SE_B_Assignment1
                 double distance = AverageSpeed * end.TotalHours;
                 Distance.Text = distance.ToString("N") + type2;
 
-                MaxPower.Text = Power.Max().ToString();
-                AvgPower.Text = Power.Average().ToString("N0");
+                if (PowerCheck)
+                {
+                    MaxPower.Text = Power.Max().ToString("N0") + " W";
+                    AvgPower.Text = Power.Average().ToString("N0") + " W";
+                }
 
-                MaxAlt.Text = Altitude.Max().ToString();
-                AvgAlt.Text = Altitude.Where(f => f > 0).Average().ToString("N0");
+                MaxAlt.Text = Altitude.Max().ToString() + " M";
+                AvgAlt.Text = Altitude.Where(f => f > 0).Average().ToString("N0") + " M";
 
 
             }
@@ -506,11 +538,11 @@ namespace SE_B_Assignment1
 
         public void SModeFalse()
         {
-            SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = false;// and so on.
+            SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = AirPressureCheck = false;// and so on.
 
         }
 
-        public void SModeCheck(char[] FullSMode)
+        public void SModeCheckV106(char[] FullSMode)
         {
             if (FullSMode[6] == '1')
             {
@@ -552,6 +584,56 @@ namespace SE_B_Assignment1
             if (FullSMode[7] == '1')
             {
                 UnitCheck = true;
+            }
+        }
+
+        public void SModeCheckV107(char[] FullSMode)
+        {
+            if (FullSMode[6] == '1')
+            {
+                HRCheck = true;
+                SpeedMenuItem.Checked = true; PowerMenuItem.Checked = true; CadenceMenuItem.Checked = true; AltitudeMenuItem.Checked = true;
+            }
+            else
+            {
+                SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = false;
+            }
+            if (FullSMode[0] == '1')
+            {
+                SpeedCheck = true; SpeedMenuItem.Checked = true;
+            }
+            else
+            {
+                SpeedMenuItem.Checked = false;
+            }
+            if (FullSMode[1] == '1')
+            {
+                CadenceCheck = true; CadenceMenuItem.Checked = true;
+            }
+            if (FullSMode[2] == '1')
+            {
+                AltCheck = true; AltitudeMenuItem.Checked = true;
+            }
+            if (FullSMode[3] == '1')
+            {
+                PowerCheck = true; PowerMenuItem.Checked = true;
+            }
+            else { PowerMenuItem.Checked = false;  }
+            if (FullSMode[4] == '1')
+            {
+                PowerBICheck = true;
+            }
+            if (FullSMode[5] == '1')
+            {
+                PowerPedalCheck = true;
+            }
+            if (FullSMode[7] == '1')
+            {
+                UnitCheck = true;
+            }
+            if (FullSMode[8] == '1')
+            {
+                AirPressureCheck = true;
             }
         }
 
@@ -608,7 +690,18 @@ namespace SE_B_Assignment1
                     string[] Smode = SmodeFile.Split('=');
                     char[] FullSMode = Smode[1].ToCharArray();
 
-                    SModeCheck(FullSMode);
+                    string VersionFile = Params.Where(x => x.Contains("Version")).FirstOrDefault();
+                    string[] version = VersionFile.Split('=');
+
+                    //MessageBox.Show(version[1]);
+                    if (version[1] == "106")
+                    {
+                        SModeCheckV106(FullSMode);
+                    }
+                    else if (version[1] == "107")
+                    {
+                        SModeCheckV107(FullSMode);
+                    }
 
                     listBox1.DataSource = Params;
                     listBox2.DataSource = HRData;
@@ -636,7 +729,7 @@ namespace SE_B_Assignment1
                         }
                     }
 
-                    else
+                    else if (PowerCheck)
                     {
 
                         foreach (var one in HRData)
@@ -652,6 +745,19 @@ namespace SE_B_Assignment1
 
                         }
                     }
+                    else
+                    {
+                        foreach (var one in HRData)
+                        {
+                            Splitter = one.Split('\t');
+                            heartrate.Add(Splitter[0]);
+                            HRSpeed.Add(Splitter[1]);
+                            cadence.Add(Splitter[2]);
+                            altitude.Add(Splitter[3]);
+
+                        }
+                    }
+
                     string DisplayDate = DateTime.ParseExact(Date[1], "yyyymmdd", CultureInfo.InvariantCulture).ToString("dd/mm/yyyy");
                     DateOfFile.Text = DisplayDate;
                     var StartTimeSpan = TimeSpan.ParseExact(Time[1], "c", System.Globalization.CultureInfo.InvariantCulture);
@@ -674,6 +780,7 @@ namespace SE_B_Assignment1
                 PlotGraph();
                 DataGridViewPlot();
             }
+            else { FileLoaded = false; }
         }
 
         private void DataGridViewPlot()
@@ -681,19 +788,86 @@ namespace SE_B_Assignment1
             DataTable dt = new DataTable();
             dt.Columns.Add("Interval Time (Seconds)");
             dt.Columns.Add("HeartRate");
-            dt.Columns.Add("Speed");
-            dt.Columns.Add("Cadence");
             int timer = interval;
-            foreach (var item in HeartRate)
+            if (!HRCheck)
             {
-                DataRow dr = dt.NewRow();             
-                dr["HeartRate"] = item;
-                dr["Interval Time (Seconds)"] = timer;
-                dt.Rows.Add(dr);
-                timer = interval + timer;
-            }
- 
+                for (int i = 0; i < HeartRate.Length; i++)
+                {
 
+                    DataRow dr = dt.NewRow();
+                    dr["HeartRate"] = HeartRate[i];
+                    dr["Interval Time (Seconds)"] = timer;
+                    dt.Rows.Add(dr);
+                    //MessageBox.Show(timer.ToString());
+                    timer = interval + timer;
+                }
+            }
+            else if (PowerCheck)
+            {
+
+                string type, type2;
+                if (!UnitCheck)
+                {
+                    type = " KM/H"; type2 = " (KM)";
+                }
+                else
+                {
+                    type = " MPH"; type2 = " (Miles)";
+                }
+
+                dt.Columns.Add("Speed" + type2);
+                dt.Columns.Add("Cadence");
+                dt.Columns.Add("Altitude");
+                dt.Columns.Add("Power (Watts)");
+
+                for (int i = 0; i < HeartRate.Length; i++)
+                {
+                    int speed = Speed[i] / 10;
+                    string speedstring = speed.ToString("N0") + type;
+                    //interval = interval + i;
+                    DataRow dr = dt.NewRow();
+                    dr["HeartRate"] = HeartRate[i];
+                    dr["Speed" + type2] = speedstring;
+                    dr["Cadence"] = cadence[i];
+                    dr["Altitude"] = Altitude[i];
+                    dr["Power (Watts)"] = Power[i];
+                    dr["Interval Time (Seconds)"] = timer;
+                    dt.Rows.Add(dr);
+                    timer = interval + timer;
+                }
+            }
+            else
+            {
+
+                string type, type2;
+                if (!UnitCheck)
+                {
+                    type = " KM/H"; type2 = " (KM)";
+                }
+                else
+                {
+                    type = " MPH"; type2 = " (Miles)";
+                }
+
+                dt.Columns.Add("Speed" + type2);
+                dt.Columns.Add("Cadence");
+                dt.Columns.Add("Altitude");
+
+                for (int i = 0; i < HeartRate.Length; i++)
+                {
+                    int speed = Speed[i] / 10;
+                    string speedstring = speed.ToString("N0") + type;
+                    //interval = interval + i;
+                    DataRow dr = dt.NewRow();
+                    dr["HeartRate"] = HeartRate[i];
+                    dr["Speed" + type2] = speedstring;
+                    dr["Cadence"] = cadence[i];
+                    dr["Altitude"] = Altitude[i];
+                    dr["Interval Time (Seconds)"] = timer;
+                    dt.Rows.Add(dr);
+                    timer = interval + timer;
+                }
+            }
 
             dataGridView1.DataSource = dt;
         }

@@ -71,6 +71,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.KMRadio = new System.Windows.Forms.RadioButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.HRUserInput = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -126,35 +127,35 @@
             this.HeartRateMenuItem.Checked = true;
             this.HeartRateMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.HeartRateMenuItem.Name = "HeartRateMenuItem";
-            this.HeartRateMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.HeartRateMenuItem.Size = new System.Drawing.Size(129, 22);
             this.HeartRateMenuItem.Text = "Heart Rate";
             this.HeartRateMenuItem.Click += new System.EventHandler(this.HeartRateMenuItem_Click);
             // 
             // SpeedMenuItem
             // 
             this.SpeedMenuItem.Name = "SpeedMenuItem";
-            this.SpeedMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SpeedMenuItem.Size = new System.Drawing.Size(129, 22);
             this.SpeedMenuItem.Text = "Speed";
             this.SpeedMenuItem.Click += new System.EventHandler(this.SpeedMenuItem_Click);
             // 
             // CadenceMenuItem
             // 
             this.CadenceMenuItem.Name = "CadenceMenuItem";
-            this.CadenceMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.CadenceMenuItem.Size = new System.Drawing.Size(129, 22);
             this.CadenceMenuItem.Text = "Cadence";
             this.CadenceMenuItem.Click += new System.EventHandler(this.CadenceMenuItem_Click);
             // 
             // AltitudeMenuItem
             // 
             this.AltitudeMenuItem.Name = "AltitudeMenuItem";
-            this.AltitudeMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.AltitudeMenuItem.Size = new System.Drawing.Size(129, 22);
             this.AltitudeMenuItem.Text = "Altitude";
             this.AltitudeMenuItem.Click += new System.EventHandler(this.AltitudeMenuItem_Click);
             // 
             // PowerMenuItem
             // 
             this.PowerMenuItem.Name = "PowerMenuItem";
-            this.PowerMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.PowerMenuItem.Size = new System.Drawing.Size(129, 22);
             this.PowerMenuItem.Text = "Power";
             this.PowerMenuItem.Click += new System.EventHandler(this.PowerMenuItem_Click);
             // 
@@ -338,7 +339,7 @@
             // MaxPower
             // 
             this.MaxPower.AutoSize = true;
-            this.MaxPower.Location = new System.Drawing.Point(373, 507);
+            this.MaxPower.Location = new System.Drawing.Point(386, 507);
             this.MaxPower.Name = "MaxPower";
             this.MaxPower.Size = new System.Drawing.Size(0, 13);
             this.MaxPower.TabIndex = 1026;
@@ -346,7 +347,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(282, 507);
+            this.label10.Location = new System.Drawing.Point(298, 507);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 1025;
@@ -355,7 +356,7 @@
             // AvgPower
             // 
             this.AvgPower.AutoSize = true;
-            this.AvgPower.Location = new System.Drawing.Point(373, 532);
+            this.AvgPower.Location = new System.Drawing.Point(386, 532);
             this.AvgPower.Name = "AvgPower";
             this.AvgPower.Size = new System.Drawing.Size(0, 13);
             this.AvgPower.TabIndex = 1022;
@@ -363,7 +364,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(282, 532);
+            this.label16.Location = new System.Drawing.Point(298, 532);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(83, 13);
             this.label16.TabIndex = 1021;
@@ -372,7 +373,7 @@
             // MaxAlt
             // 
             this.MaxAlt.AutoSize = true;
-            this.MaxAlt.Location = new System.Drawing.Point(523, 507);
+            this.MaxAlt.Location = new System.Drawing.Point(544, 507);
             this.MaxAlt.Name = "MaxAlt";
             this.MaxAlt.Size = new System.Drawing.Size(0, 13);
             this.MaxAlt.TabIndex = 1030;
@@ -380,7 +381,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(421, 507);
+            this.label14.Location = new System.Drawing.Point(448, 507);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(92, 13);
             this.label14.TabIndex = 1029;
@@ -389,7 +390,7 @@
             // AvgAlt
             // 
             this.AvgAlt.AutoSize = true;
-            this.AvgAlt.Location = new System.Drawing.Point(523, 532);
+            this.AvgAlt.Location = new System.Drawing.Point(544, 532);
             this.AvgAlt.Name = "AvgAlt";
             this.AvgAlt.Size = new System.Drawing.Size(0, 13);
             this.AvgAlt.TabIndex = 1028;
@@ -397,7 +398,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(421, 532);
+            this.label18.Location = new System.Drawing.Point(448, 532);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(88, 13);
             this.label18.TabIndex = 1027;
@@ -444,11 +445,20 @@
             this.dataGridView1.Size = new System.Drawing.Size(318, 390);
             this.dataGridView1.TabIndex = 1033;
             // 
+            // HRUserInput
+            // 
+            this.HRUserInput.Location = new System.Drawing.Point(526, 59);
+            this.HRUserInput.Name = "HRUserInput";
+            this.HRUserInput.Size = new System.Drawing.Size(101, 20);
+            this.HRUserInput.TabIndex = 1034;
+            this.HRUserInput.TextChanged += new System.EventHandler(this.HRUserInput_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 652);
+            this.Controls.Add(this.HRUserInput);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.MaxAlt);
@@ -541,6 +551,7 @@
         private System.Windows.Forms.ToolStripMenuItem AltitudeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PowerMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.TextBox HRUserInput;
     }
 }
 
