@@ -71,15 +71,35 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.KMRadio = new System.Windows.Forms.RadioButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.HRUserInput = new System.Windows.Forms.TextBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.LengthLabel = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.FTPCalc = new System.Windows.Forms.Button();
+            this.FTPLabel = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.BPMCalc = new System.Windows.Forms.Button();
+            this.HRCalcLabel = new System.Windows.Forms.Label();
+            this.FTPInput = new System.Windows.Forms.NumericUpDown();
+            this.HRUserInput = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FTPInput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HRUserInput)).BeginInit();
             this.SuspendLayout();
             // 
             // zedGraphControl1
             // 
-            this.zedGraphControl1.Location = new System.Drawing.Point(12, 112);
+            this.zedGraphControl1.Location = new System.Drawing.Point(811, 127);
             this.zedGraphControl1.Name = "zedGraphControl1";
             this.zedGraphControl1.ScrollGrace = 0D;
             this.zedGraphControl1.ScrollMaxX = 0D;
@@ -88,7 +108,7 @@
             this.zedGraphControl1.ScrollMinX = 0D;
             this.zedGraphControl1.ScrollMinY = 0D;
             this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(834, 385);
+            this.zedGraphControl1.Size = new System.Drawing.Size(825, 513);
             this.zedGraphControl1.TabIndex = 0;
             this.zedGraphControl1.UseExtendedPrintDialog = true;
             // 
@@ -99,7 +119,7 @@
             this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1182, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1648, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -162,9 +182,9 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(852, 109);
+            this.listBox1.Location = new System.Drawing.Point(9, 20);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(309, 186);
+            this.listBox1.Size = new System.Drawing.Size(498, 121);
             this.listBox1.TabIndex = 2;
             // 
             // label1
@@ -190,7 +210,7 @@
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label3.Location = new System.Drawing.Point(-2, 27);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(1500, 2);
+            this.label3.Size = new System.Drawing.Size(2500, 2);
             this.label3.TabIndex = 1003;
             // 
             // DateOfFile
@@ -229,7 +249,7 @@
             // MaxHR
             // 
             this.MaxHR.AutoSize = true;
-            this.MaxHR.Location = new System.Drawing.Point(81, 507);
+            this.MaxHR.Location = new System.Drawing.Point(938, 45);
             this.MaxHR.Name = "MaxHR";
             this.MaxHR.Size = new System.Drawing.Size(0, 13);
             this.MaxHR.TabIndex = 1009;
@@ -237,7 +257,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 507);
+            this.label6.Location = new System.Drawing.Point(866, 45);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(73, 13);
             this.label6.TabIndex = 1008;
@@ -246,7 +266,7 @@
             // MinHR
             // 
             this.MinHR.AutoSize = true;
-            this.MinHR.Location = new System.Drawing.Point(81, 532);
+            this.MinHR.Location = new System.Drawing.Point(938, 70);
             this.MinHR.Name = "MinHR";
             this.MinHR.Size = new System.Drawing.Size(0, 13);
             this.MinHR.TabIndex = 1011;
@@ -254,7 +274,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 532);
+            this.label7.Location = new System.Drawing.Point(866, 70);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(70, 13);
             this.label7.TabIndex = 1010;
@@ -263,7 +283,7 @@
             // BPM
             // 
             this.BPM.AutoSize = true;
-            this.BPM.Location = new System.Drawing.Point(81, 555);
+            this.BPM.Location = new System.Drawing.Point(938, 93);
             this.BPM.Name = "BPM";
             this.BPM.Size = new System.Drawing.Size(0, 13);
             this.BPM.TabIndex = 1013;
@@ -271,7 +291,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 555);
+            this.label8.Location = new System.Drawing.Point(866, 93);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(33, 13);
             this.label8.TabIndex = 1012;
@@ -280,7 +300,7 @@
             // AvgSpeed
             // 
             this.AvgSpeed.AutoSize = true;
-            this.AvgSpeed.Location = new System.Drawing.Point(225, 532);
+            this.AvgSpeed.Location = new System.Drawing.Point(1124, 70);
             this.AvgSpeed.Name = "AvgSpeed";
             this.AvgSpeed.Size = new System.Drawing.Size(0, 13);
             this.AvgSpeed.TabIndex = 1015;
@@ -288,7 +308,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(134, 532);
+            this.label9.Location = new System.Drawing.Point(1033, 70);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(84, 13);
             this.label9.TabIndex = 1014;
@@ -297,7 +317,7 @@
             // Distance
             // 
             this.Distance.AutoSize = true;
-            this.Distance.Location = new System.Drawing.Point(225, 555);
+            this.Distance.Location = new System.Drawing.Point(1124, 93);
             this.Distance.Name = "Distance";
             this.Distance.Size = new System.Drawing.Size(0, 13);
             this.Distance.TabIndex = 1017;
@@ -305,7 +325,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(134, 555);
+            this.label11.Location = new System.Drawing.Point(1033, 93);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(79, 13);
             this.label11.TabIndex = 1016;
@@ -314,15 +334,15 @@
             // listBox2
             // 
             this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(852, 300);
+            this.listBox2.Location = new System.Drawing.Point(8, 173);
             this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(309, 199);
+            this.listBox2.Size = new System.Drawing.Size(498, 160);
             this.listBox2.TabIndex = 1018;
             // 
             // MaxSpeed
             // 
             this.MaxSpeed.AutoSize = true;
-            this.MaxSpeed.Location = new System.Drawing.Point(225, 507);
+            this.MaxSpeed.Location = new System.Drawing.Point(1124, 45);
             this.MaxSpeed.Name = "MaxSpeed";
             this.MaxSpeed.Size = new System.Drawing.Size(0, 13);
             this.MaxSpeed.TabIndex = 1020;
@@ -330,7 +350,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(134, 507);
+            this.label13.Location = new System.Drawing.Point(1033, 45);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(88, 13);
             this.label13.TabIndex = 1019;
@@ -339,7 +359,7 @@
             // MaxPower
             // 
             this.MaxPower.AutoSize = true;
-            this.MaxPower.Location = new System.Drawing.Point(386, 507);
+            this.MaxPower.Location = new System.Drawing.Point(1321, 45);
             this.MaxPower.Name = "MaxPower";
             this.MaxPower.Size = new System.Drawing.Size(0, 13);
             this.MaxPower.TabIndex = 1026;
@@ -347,7 +367,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(298, 507);
+            this.label10.Location = new System.Drawing.Point(1233, 45);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 1025;
@@ -356,7 +376,7 @@
             // AvgPower
             // 
             this.AvgPower.AutoSize = true;
-            this.AvgPower.Location = new System.Drawing.Point(386, 532);
+            this.AvgPower.Location = new System.Drawing.Point(1321, 70);
             this.AvgPower.Name = "AvgPower";
             this.AvgPower.Size = new System.Drawing.Size(0, 13);
             this.AvgPower.TabIndex = 1022;
@@ -364,7 +384,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(298, 532);
+            this.label16.Location = new System.Drawing.Point(1233, 70);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(83, 13);
             this.label16.TabIndex = 1021;
@@ -373,7 +393,7 @@
             // MaxAlt
             // 
             this.MaxAlt.AutoSize = true;
-            this.MaxAlt.Location = new System.Drawing.Point(544, 507);
+            this.MaxAlt.Location = new System.Drawing.Point(1513, 45);
             this.MaxAlt.Name = "MaxAlt";
             this.MaxAlt.Size = new System.Drawing.Size(0, 13);
             this.MaxAlt.TabIndex = 1030;
@@ -381,7 +401,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(448, 507);
+            this.label14.Location = new System.Drawing.Point(1417, 45);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(92, 13);
             this.label14.TabIndex = 1029;
@@ -390,7 +410,7 @@
             // AvgAlt
             // 
             this.AvgAlt.AutoSize = true;
-            this.AvgAlt.Location = new System.Drawing.Point(544, 532);
+            this.AvgAlt.Location = new System.Drawing.Point(1513, 70);
             this.AvgAlt.Name = "AvgAlt";
             this.AvgAlt.Size = new System.Drawing.Size(0, 13);
             this.AvgAlt.TabIndex = 1028;
@@ -398,7 +418,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(448, 532);
+            this.label18.Location = new System.Drawing.Point(1417, 70);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(88, 13);
             this.label18.TabIndex = 1027;
@@ -419,7 +439,7 @@
             // 
             this.groupBox1.Controls.Add(this.KMRadio);
             this.groupBox1.Controls.Add(this.MPHRadio);
-            this.groupBox1.Location = new System.Drawing.Point(755, 43);
+            this.groupBox1.Location = new System.Drawing.Point(700, 43);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(91, 58);
             this.groupBox1.TabIndex = 1032;
@@ -440,26 +460,179 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(852, 109);
+            this.dataGridView1.Location = new System.Drawing.Point(6, 6);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(318, 390);
+            this.dataGridView1.Size = new System.Drawing.Size(751, 407);
             this.dataGridView1.TabIndex = 1033;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Location = new System.Drawing.Point(11, 195);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(771, 445);
+            this.tabControl1.TabIndex = 1035;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dataGridView1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(763, 419);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.label12);
+            this.tabPage1.Controls.Add(this.label4);
+            this.tabPage1.Controls.Add(this.listBox1);
+            this.tabPage1.Controls.Add(this.listBox2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(763, 374);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(7, 3);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(81, 13);
+            this.label12.TabIndex = 1037;
+            this.label12.Text = "File Information:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 157);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 1036;
+            this.label4.Text = "Bike Data:";
+            // 
+            // label15
+            // 
+            this.label15.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label15.Location = new System.Drawing.Point(801, 28);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(4, 650);
+            this.label15.TabIndex = 1036;
+            // 
+            // LengthLabel
+            // 
+            this.LengthLabel.AutoSize = true;
+            this.LengthLabel.Location = new System.Drawing.Point(79, 110);
+            this.LengthLabel.Name = "LengthLabel";
+            this.LengthLabel.Size = new System.Drawing.Size(0, 13);
+            this.LengthLabel.TabIndex = 1038;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(9, 110);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(43, 13);
+            this.label19.TabIndex = 1037;
+            this.label19.Text = "Length:";
+            // 
+            // FTPCalc
+            // 
+            this.FTPCalc.Location = new System.Drawing.Point(657, 83);
+            this.FTPCalc.Name = "FTPCalc";
+            this.FTPCalc.Size = new System.Drawing.Size(37, 22);
+            this.FTPCalc.TabIndex = 1040;
+            this.FTPCalc.Text = "Calc";
+            this.FTPCalc.UseVisualStyleBackColor = true;
+            this.FTPCalc.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // FTPLabel
+            // 
+            this.FTPLabel.AutoSize = true;
+            this.FTPLabel.Location = new System.Drawing.Point(546, 107);
+            this.FTPLabel.Name = "FTPLabel";
+            this.FTPLabel.Size = new System.Drawing.Size(0, 13);
+            this.FTPLabel.TabIndex = 1041;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(457, 88);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(58, 13);
+            this.label17.TabIndex = 1043;
+            this.label17.Text = "Enter FTP:";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(457, 46);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(80, 13);
+            this.label20.TabIndex = 1042;
+            this.label20.Text = "Calculate BPM:";
+            // 
+            // BPMCalc
+            // 
+            this.BPMCalc.Location = new System.Drawing.Point(657, 43);
+            this.BPMCalc.Name = "BPMCalc";
+            this.BPMCalc.Size = new System.Drawing.Size(37, 20);
+            this.BPMCalc.TabIndex = 1044;
+            this.BPMCalc.Text = "Calc";
+            this.BPMCalc.UseVisualStyleBackColor = true;
+            this.BPMCalc.Visible = false;
+            this.BPMCalc.Click += new System.EventHandler(this.BPMCalc_Click);
+            // 
+            // HRCalcLabel
+            // 
+            this.HRCalcLabel.AutoSize = true;
+            this.HRCalcLabel.Location = new System.Drawing.Point(546, 66);
+            this.HRCalcLabel.Name = "HRCalcLabel";
+            this.HRCalcLabel.Size = new System.Drawing.Size(0, 13);
+            this.HRCalcLabel.TabIndex = 1045;
+            // 
+            // FTPInput
+            // 
+            this.FTPInput.Location = new System.Drawing.Point(549, 85);
+            this.FTPInput.Name = "FTPInput";
+            this.FTPInput.Size = new System.Drawing.Size(101, 20);
+            this.FTPInput.TabIndex = 1046;
+            this.FTPInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FTPInput_KeyDown);
             // 
             // HRUserInput
             // 
-            this.HRUserInput.Location = new System.Drawing.Point(526, 59);
+            this.HRUserInput.Location = new System.Drawing.Point(549, 44);
             this.HRUserInput.Name = "HRUserInput";
             this.HRUserInput.Size = new System.Drawing.Size(101, 20);
-            this.HRUserInput.TabIndex = 1034;
-            this.HRUserInput.TextChanged += new System.EventHandler(this.HRUserInput_TextChanged);
+            this.HRUserInput.TabIndex = 1047;
+            this.HRUserInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HRUserInput_KeyDown);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1182, 652);
+            this.ClientSize = new System.Drawing.Size(1648, 652);
             this.Controls.Add(this.HRUserInput);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.FTPInput);
+            this.Controls.Add(this.HRCalcLabel);
+            this.Controls.Add(this.BPMCalc);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.FTPLabel);
+            this.Controls.Add(this.FTPCalc);
+            this.Controls.Add(this.LengthLabel);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.MaxAlt);
             this.Controls.Add(this.label14);
@@ -471,7 +644,6 @@
             this.Controls.Add(this.label16);
             this.Controls.Add(this.MaxSpeed);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.listBox2);
             this.Controls.Add(this.Distance);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.AvgSpeed);
@@ -486,12 +658,9 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.StartTime);
             this.Controls.Add(this.DateOfFile);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.zedGraphControl1);
-            this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Cycle Data Program";
@@ -502,6 +671,12 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FTPInput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HRUserInput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -551,7 +726,22 @@
         private System.Windows.Forms.ToolStripMenuItem AltitudeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PowerMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.TextBox HRUserInput;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label LengthLabel;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Button FTPCalc;
+        private System.Windows.Forms.Label FTPLabel;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Button BPMCalc;
+        private System.Windows.Forms.Label HRCalcLabel;
+        private System.Windows.Forms.NumericUpDown FTPInput;
+        private System.Windows.Forms.NumericUpDown HRUserInput;
     }
 }
 
