@@ -8,12 +8,7 @@ namespace SE_B_Assignment1
 {
     class HRFileSort
     {
-        /* public string[] speed;
- public string[] heartrate;
- public string[] cadence;
- public string[] altitude;
- public string[] power;
- public string[] powerbalance; */
+
         public List<string> HRSpeed = new List<string>();
         public List<string> heartrate = new List<string>();
         public List<string> cadence = new List<string>();
@@ -35,6 +30,7 @@ namespace SE_B_Assignment1
             string[] Smode = SmodeFile.Split('=');
             char[] FullSMode = Smode[1].ToCharArray();
 
+            // different smodes check based on version
             if (version[1] == "106")
             {
                 SModeCheckV106(FullSMode);
@@ -43,49 +39,46 @@ namespace SE_B_Assignment1
             {
                 SModeCheckV107(FullSMode);
             }
-
+            
             string IntervalFile = Params.Where(x => x.Contains("Interval")).FirstOrDefault();
             string[] Interval = IntervalFile.Split('=');
             interval = Int32.Parse(Interval[1]);
 
             string[] Splitter;
-            if (!HRCheck)
+
+            // checks each smode statement and will load in a column based on if previous column loaded in or not by incrementing i for array index
+            foreach (var one in HRData)
             {
-                foreach (var one in HRData)
+                Splitter = one.Split('\t'); //tab split
+                heartrate.Add(Splitter[0]); //always there at 0
+                int i = 1;
+                if (SpeedCheck)
                 {
-                    Splitter = one.Split('\t');
-                    heartrate.Add(Splitter[0]);
+                    HRSpeed.Add(Splitter[i]);
+                    i++;
+                }
+                if (CadenceCheck)
+                {
+                    cadence.Add(Splitter[i]);
+                    i++;
+                }
+                if (AltCheck)
+                {
+                    altitude.Add(Splitter[i]);
+                    i++;
+                }
+                if (PowerCheck)
+                {
+                    power.Add(Splitter[i]);
+                    i++;
+                }
+                if (PowerBICheck)
+                {
+                    powerbalance.Add(Splitter[i]);
+                    i++;
                 }
             }
-
-            else if (PowerCheck)
-            {
-
-                foreach (var one in HRData)
-                {
-                    Splitter = one.Split('\t');
-                    heartrate.Add(Splitter[0]);
-                    HRSpeed.Add(Splitter[1]);
-                    cadence.Add(Splitter[2]);
-                    altitude.Add(Splitter[3]);
-                    power.Add(Splitter[4]);
-                    powerbalance.Add(Splitter[5]);
-
-
-                }
-            }
-            else
-            {
-                foreach (var one in HRData)
-                {
-                    Splitter = one.Split('\t');
-                    heartrate.Add(Splitter[0]);
-                    HRSpeed.Add(Splitter[1]);
-                    cadence.Add(Splitter[2]);
-                    altitude.Add(Splitter[3]);
-
-                }
-            }
+            
         }
 
         public void SModeFalse()
