@@ -15,6 +15,7 @@ namespace SE_B_Assignment1
         public List<string> altitude = new List<string>();
         public List<string> power = new List<string>();
         public List<string> powerbalance = new List<string>();
+        public List<string> airpressure = new List<string>();
         public bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, AirPressureCheck;
 
         public int interval;
@@ -28,7 +29,7 @@ namespace SE_B_Assignment1
 
             string SmodeFile = Params.Where(x => x.Contains("SMode")).FirstOrDefault();
             string[] Smode = SmodeFile.Split('=');
-            char[] FullSMode = Smode[1].ToCharArray();
+            char[] FullSMode = Smode[1].ToCharArray(); //split entire smode string to char array
 
             // different smodes check based on version
             if (version[1] == "106")
@@ -75,6 +76,11 @@ namespace SE_B_Assignment1
                 if (PowerBICheck)
                 {
                     powerbalance.Add(Splitter[i]);
+                    i++;
+                }
+                if (AirPressureCheck)
+                {
+                    airpressure.Add(Splitter[i]);
                     i++;
                 }
             }

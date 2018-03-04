@@ -28,6 +28,7 @@ namespace SE_B_Assignment1
         List<string> power = new List<string>();
         List<string> powerbalance = new List<string>();
         bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck;
+        bool OptionChanged = false;
         TimeSpan start;
         TimeSpan end;
 
@@ -48,13 +49,14 @@ namespace SE_B_Assignment1
             KMRadio.CheckedChanged += new EventHandler(SpeedFormat);
             tabPage1.Text = @"Raw Data";
             tabPage2.Text = @"Table Data";
-            FTPInput.Maximum = 2500;
+            FTPInput.Maximum = 1000;
             HRUserInput.Maximum = 300;
         }
 #region SpeedFormat Plots Speed Curve & Allows Users to switch between US & EU formats for Miles/KM
         private void SpeedFormat(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
+            OptionChanged = true; //used for later settings (removing graph lines)
             SpeedPlot();
         }
 
@@ -74,7 +76,7 @@ namespace SE_B_Assignment1
                     }
                     if (MPHRadio.Checked)
                     {
-                        if (UnitCheck)
+                        if (UnitCheck) //eu or us
                         {
                             double MaxSpd = Speed.Max() / 10;
                             MaxSpeed.Text = MaxSpd.ToString("N0") + " MPH";
@@ -130,7 +132,7 @@ namespace SE_B_Assignment1
                     }
                     else if (KMRadio.Checked)
                     {
-                        if (!UnitCheck)
+                        if (!UnitCheck) //eu or us
                         {
                             double MaxSpd = Speed.Max() / 10;
                             MaxSpeed.Text = MaxSpd.ToString("N0") + " KM/H";
@@ -379,7 +381,7 @@ namespace SE_B_Assignment1
 
         
 
-        static string Axis_ScaleFormatEvent(GraphPane pane, Axis axis, double val, int index) //lets the axis change to interval timespan rather than leaving it in seconds format
+        static string Axis_ScaleFormatEvent(GraphPane pane, Axis axis, double val, int index) //lets the x axis change to interval timespan rather than leaving it in seconds format
         {
             TimeSpan timeVal = TimeSpan.FromSeconds(val); return timeVal.ToString();
         }
@@ -387,7 +389,7 @@ namespace SE_B_Assignment1
         private void PlotGraph()
         {
             GraphPane myPane = zedGraphControl1.GraphPane;
-            myPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler(Axis_ScaleFormatEvent);
+            myPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler(Axis_ScaleFormatEvent); //lets the x axis change to interval timespan rather than leaving it in seconds format
 
             zedGraphControl1.GraphPane.CurveList.Clear();
             zedGraphControl1.GraphPane.GraphObjList.Clear();
@@ -402,13 +404,7 @@ namespace SE_B_Assignment1
             myPane.XAxis.Scale.MinorStep = timer.TotalSeconds;
             //myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
             // myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
-            // interval = interval * 5;
-            // MessageBox.Show(interval.ToString());
-
-
-            /* myPane.XAxis.Scale.MajorStep = 50;
-             myPane.YAxis.Scale.Mag = 0;
-             myPane.XAxis.Scale.Max = 1000;*/
+            // interval = interval * 5
 
             PointPairList HRSpeed1 = new PointPairList();
             PointPairList HeartRate1 = new PointPairList();
@@ -473,7 +469,7 @@ namespace SE_B_Assignment1
             }
 
 
-            if (SpeedMenuItem.Checked == true)
+            if (SpeedMenuItem.Checked && !MPHRadio.Checked && !KMRadio.Checked) //selects EU or US option first load
             {
                 if (!UnitCheck)
                 {
@@ -520,14 +516,14 @@ namespace SE_B_Assignment1
 
             zedGraphControl1.AxisChange();
             zedGraphControl1.Refresh();
-            zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane);
+            zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane); //unzooms graph whenever it is reloaded
         }
 
         private void SummaryData() // summary data calculations to display in gui
         {
-            MaxHR.Text = HeartRate.Max().ToString();
-            MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString();
-            BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0");
+            MaxHR.Text = HeartRate.Max().ToString() + " bpm";
+            MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString() + " bpm";
+            BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0") + " bpm";
 
             if (!UnitCheck)
             {
@@ -549,8 +545,8 @@ namespace SE_B_Assignment1
             }
             if (PowerCheck)
             {
-                MaxPower.Text = Power.Max().ToString("N0") + " W";
-                AvgPower.Text = Power.Average().ToString("N0") + " W";
+                MaxPower.Text = Power.Max().ToString("N0") + " Watts";
+                AvgPower.Text = Power.Average().ToString("N0") + " Watts";
             }
             if (AltCheck)
             {
@@ -585,6 +581,7 @@ namespace SE_B_Assignment1
             if (!PowerCheck) { PowerMenuItem.Checked = false; }
             if (!CadenceCheck) { CadenceMenuItem.Checked = false; }
             if (!AltCheck) { AltitudeMenuItem.Checked = false; }
+            //unchecks graph options based on smode values
 
         }
 
@@ -594,7 +591,7 @@ namespace SE_B_Assignment1
             FTPMaxCalc();
         }
 
-        private void FTPMaxCalc()
+        private void FTPMaxCalc() //Average % calc of user input against max power (watts)
         {
             double intValue = 0;
             if (!Double.TryParse(FTPInput.Text, out intValue))
@@ -626,7 +623,7 @@ namespace SE_B_Assignment1
             HeartCalcMax();
         }
 
-        private void HeartCalcMax()
+        private void HeartCalcMax() //Average % calc of user input against max heart rate
         {
             double intValue = 0;
             if (!Double.TryParse(HRUserInput.Text, out intValue))
@@ -653,14 +650,6 @@ namespace SE_B_Assignment1
             }
         }
 
-        private void SetSize()
-        {
-            zedGraphControl1.Location = new Point(0, 0);
-            zedGraphControl1.IsShowPointValues = true;
-            zedGraphControl1.Size = new Size(this.ClientRectangle.Width - 20, this.ClientRectangle.Height - 50);
-
-        }
-
 #endregion
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -670,7 +659,7 @@ namespace SE_B_Assignment1
 
         public void SModeFalse()
         {
-            SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = AirPressureCheck = false;//reset everything for a new file
+            SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = AirPressureCheck = OptionChanged = false;//reset everything for a new file
 
         }
 
@@ -786,13 +775,14 @@ namespace SE_B_Assignment1
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Interval Time (Seconds)");
-            dt.Columns.Add("HeartRate");
+            dt.Columns.Add("Heart Rate (BPM)");
             //int timer = interval;
             TimeSpan timer = start; // sets timer to start time
 
+            //adds columns to datagrid based on smode values
             if (SpeedCheck)
             {
-                dt.Columns.Add("Speed" + "(" + type2 + ")");
+                dt.Columns.Add("Speed " + "(" + type2 + ")");
             }
             if (CadenceCheck)
             {
@@ -800,7 +790,7 @@ namespace SE_B_Assignment1
             }
             if (AltCheck)
             {
-                dt.Columns.Add("Altitude");
+                dt.Columns.Add("Altitude (M)");
             }
             if (PowerCheck)
             {
@@ -816,14 +806,14 @@ namespace SE_B_Assignment1
                 DataRow dr = dt.NewRow();
                 string balance = null;
                 byte index = new byte();
-                dr["HeartRate"] = HeartRate[i];
+                dr["Heart Rate (BPM)"] = HeartRate[i];
                 dr["Interval Time (Seconds)"] = timer;
 
                 if (SpeedCheck)
                 {
                     int speed = Speed[i] / 10;
                     string speedstring = speed.ToString("N0") + type;
-                    dr["Speed" + "(" + type2 + ")"] = speedstring;
+                    dr["Speed " + "(" + type2 + ")"] = speedstring;
                 }
 
                 if (PowerBICheck)
@@ -846,7 +836,7 @@ namespace SE_B_Assignment1
                 }
                 if (AltCheck)
                 {
-                    dr["Altitude"] = Altitude[i];
+                    dr["Altitude (M)"] = Altitude[i];
                 }
                 if (PowerCheck)
                 {
@@ -856,14 +846,8 @@ namespace SE_B_Assignment1
                 dt.Rows.Add(dr);
                 timer = timer.Add(TimeSpan.FromSeconds(interval));
             }
-            
-
-
             dataGridView1.DataSource = dt;
             //listBox3.DataSource = dt;
-
-   
-
         }
 
         private void Form1_Load(object sender, EventArgs e)

@@ -445,7 +445,7 @@
             // 
             this.groupBox1.Controls.Add(this.KMRadio);
             this.groupBox1.Controls.Add(this.MPHRadio);
-            this.groupBox1.Location = new System.Drawing.Point(232, 128);
+            this.groupBox1.Location = new System.Drawing.Point(227, 128);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(91, 58);
             this.groupBox1.TabIndex = 1032;
@@ -573,9 +573,9 @@
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(10, 507);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(80, 13);
+            this.label20.Size = new System.Drawing.Size(90, 13);
             this.label20.TabIndex = 1042;
-            this.label20.Text = "Calculate BPM:";
+            this.label20.Text = "Enter Heart Rate:";
             // 
             // BPMCalc
             // 
