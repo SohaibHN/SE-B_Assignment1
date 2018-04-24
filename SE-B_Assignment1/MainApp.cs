@@ -379,7 +379,108 @@ namespace SE_B_Assignment1
         }
         #endregion
 
-        
+        double lastXAxisMax, lastXAxisMin, lastYAxisMax, lastYAxisMin;
+        bool zoomIn;
+        private bool zedGraphControl1_MouseDownEvent(ZedGraphControl sender, MouseEventArgs e)
+        {
+            // Save the zoom values
+            lastXAxisMax = sender.GraphPane.XAxis.Scale.Max;
+            lastXAxisMin = sender.GraphPane.XAxis.Scale.Min;
+            lastYAxisMax = sender.GraphPane.YAxis.Scale.Max;
+            lastYAxisMin = sender.GraphPane.YAxis.Scale.Min;
+            zoomIn = false;
+            return false;
+        }
+
+        private void zedGraphControl1_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
+        {
+            if (((lastYAxisMax - lastYAxisMin) * (lastXAxisMax - lastXAxisMin)) > ((sender.GraphPane.XAxis.Scale.Max - sender.GraphPane.XAxis.Scale.Min) * (sender.GraphPane.YAxis.Scale.Max - sender.GraphPane.YAxis.Scale.Min)))
+            {
+                zoomIn = true;
+            }
+            else
+            {
+                zoomIn = false;
+            }
+
+            if (zoomIn)
+            {
+                int StartPoint = (int)sender.GraphPane.XAxis.Scale.Min;
+                int EndPoint = (int)sender.GraphPane.XAxis.Scale.Max;
+                int Difference = EndPoint - StartPoint;
+
+                if (HeartRate.Length > StartPoint && HeartRate.Length >= EndPoint)
+                {
+                    //Heart Rate
+                    List<int> HeartRateList = HeartRate.ToList();
+                    List<int> UpdatedHeartRate;
+                    UpdatedHeartRate = HeartRateList.GetRange(StartPoint, Difference);
+                    HeartRate = UpdatedHeartRate.ToArray();
+
+                    if (SpeedCheck)
+                    {
+                        //Speed
+                        List<int> SpeedList = Speed.ToList();
+                        List<int> UpdatedSpeedList;
+                        UpdatedSpeedList = SpeedList.GetRange(StartPoint, Difference);
+                        Speed = UpdatedSpeedList.ToArray();
+                    }
+
+                    if (AltCheck)
+                    {
+
+                        //Altitude
+                        List<int> AltitudeList = Altitude.ToList();
+                        List<int> UpdatedAltitudeList;
+                        UpdatedAltitudeList = AltitudeList.GetRange(StartPoint, Difference);
+                        Altitude = UpdatedAltitudeList.ToArray();
+                    }
+                    if (CadenceCheck)
+                    {
+                        //Cadence
+                        List<int> CadenceList = Cadeance.ToList();
+                        List<int> UpdatedCadenceList;
+                        UpdatedCadenceList = CadenceList.GetRange(StartPoint, Difference);
+                        Cadeance = UpdatedCadenceList.ToArray();
+                    }
+                    if (PowerCheck)
+                    {
+                        //Power
+                        List<int> PowerList = Power.ToList();
+                        List<int> UpdatedPowerList;
+                        UpdatedPowerList = PowerList.GetRange(StartPoint, Difference);
+                        Power = UpdatedPowerList.ToArray();
+                    }
+                    SummaryData();
+                }
+            }
+            else
+            {
+                HeartRate = heartrate.Select(int.Parse).ToArray();
+                if (SpeedCheck)
+                {
+                    Speed = HRSpeed.Select(int.Parse).ToArray();
+                }
+
+                if (AltCheck)
+                {
+                    Altitude = altitude.Select(int.Parse).ToArray();
+                }
+                if (CadenceCheck)
+                {
+                    Cadeance = cadence.Select(int.Parse).ToArray();
+                }
+                if (PowerCheck)
+                {
+                    Power = power.Select(int.Parse).ToArray();
+                }
+                if (PowerBICheck)
+                {
+                    PowerBalance = powerbalance.Select(int.Parse).ToArray();
+                }
+                SummaryData();
+            }
+        }
 
         static string Axis_ScaleFormatEvent(GraphPane pane, Axis axis, double val, int index) //lets the x axis change to interval timespan rather than leaving it in seconds format
         {
@@ -698,8 +799,8 @@ namespace SE_B_Assignment1
                 // clears everything everytime a file is loaded
                 ResetGraphObjs();
                 
-                try
-                {
+               try
+               {
                     List<string> HRData = File.ReadLines(ofd.FileName)
                                                .SkipWhile(line => line != "[HRData]")
                                                .Skip(1) //skips [HRDATA] line
@@ -724,10 +825,10 @@ namespace SE_B_Assignment1
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                   MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //error message on incorrect file types
-                    return;
-                }
+                   return;
+               }
 
                 SetFileVars(); //set vars based from HRFileSort Class
                 PlotGraph(); 
