@@ -62,8 +62,27 @@ namespace SE_B_Assignment1
             tabPage3.Text = @"Comparsion Data";
             FTPInput.Maximum = 1000;
             HRUserInput.Maximum = 300;
+            this.zedGraphControl1.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.zedGraphControl1_PointValueEvent);
         }
-#region SpeedFormat Plots Speed Curve & Allows Users to switch between US & EU formats for Miles/KM
+
+
+
+        private string zedGraphControl1_PointValueEvent(ZedGraph.ZedGraphControl sender, ZedGraph.GraphPane pane, ZedGraph.CurveItem curve, int iPt)
+        {
+            //MessageBox.Show(curve.ValueAxis(pane).ToString());
+
+            int pointvalue = 0;
+            if (curve.Label.Text.Contains("Power"))
+            {
+                int xpoint = (int)curve[iPt].X;
+                pointvalue = Power[xpoint-1];
+            }
+            string value = pointvalue.ToString();
+            return curve.Label.Text + " - " + value;
+            //return "X = " + curve[iPt].X.ToString() + " Y = " + curve[iPt].Y.ToString() + " Name = " + curve.Label.Text;
+        }
+
+        #region SpeedFormat Plots Speed Curve & Allows Users to switch between US & EU formats for Miles/KM
         private void SpeedFormat(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -109,7 +128,7 @@ namespace SE_B_Assignment1
                             }
                             LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
                             HRSpeed1, Color.Red, SymbolType.None);
-                            
+
                         }
                         else
                         {
@@ -215,9 +234,9 @@ namespace SE_B_Assignment1
             //
             return kilometers * 0.621371192;
         }
-#endregion
+        #endregion
 
-#region GraphMenuOptions Removes/Adds lines from graph
+        #region GraphMenuOptions Removes/Adds lines from graph
         private void HeartRateMenuItem_Click(object sender, EventArgs e)
         {
             if (FileLoaded) // doesn't do anything until a file is loaded in
@@ -277,19 +296,19 @@ namespace SE_B_Assignment1
                     {
                         this.MPHRadio.Checked = true;
                     }/*
-                    PointPairList HRSpeed1 = new PointPairList();
-                    for (int i = 0; i < Speed.Length; i++)
-                    {
-                        if (HRCheck)
-                        {
-                            double speed = Speed[i] / 10;
-                            //interval = interval + i;
-                            HRSpeed1.Add(i, speed);
-                        }
+                            PointPairList HRSpeed1 = new PointPairList();
+                            for (int i = 0; i < Speed.Length; i++)
+                            {
+                                if (HRCheck)
+                                {
+                                    double speed = Speed[i] / 10;
+                                    //interval = interval + i;
+                                    HRSpeed1.Add(i, speed);
+                                }
 
-                    }
-                    LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
-                    HRSpeed1, Color.Red, SymbolType.None); */
+                            }
+                            LineItem SpeedCurve = zedGraphControl1.GraphPane.AddCurve("Speed",
+                            HRSpeed1, Color.Red, SymbolType.None); */
                 }
                 zedGraphControl1.Refresh();
                 zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane);
@@ -422,7 +441,7 @@ namespace SE_B_Assignment1
 
             if (heartrate.Count > StartPoint && heartrate.Count >= EndPoint && FileLoaded)
             {
-                
+
                 //Heart Rate
                 List<int> HeartRateList = heartrate.ConvertAll(int.Parse);
                 List<int> UpdatedHeartRate;
@@ -465,7 +484,7 @@ namespace SE_B_Assignment1
                 }
                 SummaryData();
             }
-            
+
         }
 
         static string Axis_ScaleFormatEvent(GraphPane pane, Axis axis, double val, int index) //lets the x axis change to interval timespan rather than leaving it in seconds format
@@ -487,7 +506,7 @@ namespace SE_B_Assignment1
             myPane.XAxis.Title.Text = "Time";
             TimeSpan timer = new TimeSpan();
             timer = timer.Add(TimeSpan.FromSeconds(interval));
-
+            zedGraphControl1.IsShowPointValues = true;
             //myPane.XAxis.Scale.MinorStep = timer.TotalSeconds;
             //myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
             // myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
@@ -579,7 +598,7 @@ namespace SE_B_Assignment1
                 HeartRate1, Color.Blue, SymbolType.None);
             }
 
-            if (SpeedMenuItem.Checked && SpeedCheck) 
+            if (SpeedMenuItem.Checked && SpeedCheck)
             {
                 SpeedPlot();
             }
@@ -612,6 +631,13 @@ namespace SE_B_Assignment1
             MaxHR.Text = HeartRate.Max().ToString() + " bpm";
             MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString() + " bpm";
             BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0") + " bpm";
+            //BPM.Text = PowerBalance.Where(f => f > 0).Average().ToString("N0") + " bpm";
+            int PowerB = (int)PowerBalance.Where(f => f > 0).Average(); //16 bit digit
+
+            byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+
+            int right = 100 - left;
+            //BPM.Text = left.ToString() + "/" + right.ToString();
 
             if (!UnitCheck)
             {
@@ -633,8 +659,12 @@ namespace SE_B_Assignment1
             }
             if (PowerCheck)
             {
+
                 MaxPower.Text = Power.Max().ToString("N0") + " Watts";
                 AvgPower.Text = Power.Average().ToString("N0") + " Watts";
+
+                CalculateNormalizedPower();
+
             }
             if (AltCheck)
             {
@@ -642,6 +672,51 @@ namespace SE_B_Assignment1
                 AvgAlt.Text = Altitude.Where(f => f > 0).Average().ToString("N0") + " M";
             }
 
+        }
+
+        public void CalculateNormalizedPower()
+        {
+            var powers = new List<double>();
+
+            for (var x = 0; x < Power.Length; x++)
+            {
+                if (((x + 1) * interval) >= 30) // start rolling average at 30 seconds
+                {
+                    powers.Add(Power[x]);
+                }
+            }
+
+            if (powers.Any() || powers.Count > 30) // 30 required to calculate moving average
+            {
+
+                // calculate a rolling 30 second average of the preceding time points after 30 seconds
+                int timeset = 30 / interval;
+                List<double> movingAverages = Enumerable
+                .Range(0, powers.Count - timeset + 1)
+                .Select(n => powers.Skip(n).Take(timeset).Average())
+                .ToList();
+
+                // raise all the moving averages to the fourth power
+                List<double> averagesToFourthPower = PowerUp(movingAverages, 4);
+
+                // find the average of values raised to fourth power
+                double PowerAverage = averagesToFourthPower.Average();
+
+                // take the fourth root of the average values raised to the fourth power
+                double normalizedPower = Math.Round(Math.Pow(PowerAverage, 1.0 / 4), 2, MidpointRounding.AwayFromZero);
+
+                NormalPower.Text = normalizedPower.ToString("N0") + " Watts";
+            }
+        }
+
+        public List<double> PowerUp(List<double> AverageList, int p)
+        {
+            for (var x = 0; x < AverageList.Count; x++)
+            {
+                AverageList[x] = Math.Pow(AverageList[x], p);
+            }
+
+            return AverageList;
         }
 
 

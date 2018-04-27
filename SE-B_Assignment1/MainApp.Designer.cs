@@ -77,6 +77,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label12 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.CompareGridView = new System.Windows.Forms.DataGridView();
             this.LengthLabel = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.FTPCalc = new System.Windows.Forms.Button();
@@ -94,19 +96,19 @@
             this.FileNameLabel = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.CompareGridView = new System.Windows.Forms.DataGridView();
+            this.NormalPower = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CompareGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FTPInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HRUserInput)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CompareGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // zedGraphControl1
@@ -551,6 +553,29 @@
             this.label4.TabIndex = 1036;
             this.label4.Text = "Bike Data:";
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.CompareGridView);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(1162, 352);
+            this.tabPage3.TabIndex = 3;
+            this.tabPage3.Text = "tabPage3";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // CompareGridView
+            // 
+            this.CompareGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CompareGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.CompareGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.CompareGridView.Location = new System.Drawing.Point(3, 3);
+            this.CompareGridView.Name = "CompareGridView";
+            this.CompareGridView.Size = new System.Drawing.Size(1156, 346);
+            this.CompareGridView.TabIndex = 1034;
+            // 
             // LengthLabel
             // 
             this.LengthLabel.AutoSize = true;
@@ -712,34 +737,30 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1176, 768);
             this.tableLayoutPanel1.TabIndex = 1054;
             // 
-            // tabPage3
+            // NormalPower
             // 
-            this.tabPage3.Controls.Add(this.CompareGridView);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1162, 352);
-            this.tabPage3.TabIndex = 3;
-            this.tabPage3.Text = "tabPage3";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.NormalPower.AutoSize = true;
+            this.NormalPower.Location = new System.Drawing.Point(134, 470);
+            this.NormalPower.Name = "NormalPower";
+            this.NormalPower.Size = new System.Drawing.Size(0, 13);
+            this.NormalPower.TabIndex = 1056;
             // 
-            // CompareGridView
+            // label25
             // 
-            this.CompareGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.CompareGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.CompareGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.CompareGridView.Location = new System.Drawing.Point(3, 3);
-            this.CompareGridView.Name = "CompareGridView";
-            this.CompareGridView.Size = new System.Drawing.Size(1156, 346);
-            this.CompareGridView.TabIndex = 1034;
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(9, 470);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(95, 13);
+            this.label25.TabIndex = 1055;
+            this.label25.Text = "Normalized Power:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1534, 792);
+            this.Controls.Add(this.NormalPower);
+            this.Controls.Add(this.label25);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.FileNameLabel);
             this.Controls.Add(this.label24);
@@ -800,11 +821,11 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.CompareGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FTPInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HRUserInput)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.CompareGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -879,6 +900,8 @@
         private System.Windows.Forms.ToolStripMenuItem compareFilesToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.DataGridView CompareGridView;
+        private System.Windows.Forms.Label NormalPower;
+        private System.Windows.Forms.Label label25;
     }
 }
 
