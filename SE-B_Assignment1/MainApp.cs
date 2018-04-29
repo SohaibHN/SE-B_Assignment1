@@ -65,6 +65,110 @@ namespace SE_B_Assignment1
             this.zedGraphControl1.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.zedGraphControl1_PointValueEvent);
         }
 
+        double potentialIntervalStart;
+        double detectedIntervalEnd;
+
+        public void IntervalDetection()
+        {
+            List<string> detectedIntervals = new List<string>();
+            List<string> detectedInterval = new List<string>();
+            int detected = 0;
+            for (int i = 0; i < HeartRate.Length; i++)
+            {
+                bool potentialIntervalDetected = false;
+                bool intervalDetected = false;
+
+                for (int p = i; p < Power.Length; p++)
+                {
+                    // get average of proceeding 14 seconds of powers - time taken for rider to reach maximum power
+                    var currentPowers = new List<double>();
+                    var proceedingPowers = new List<double>();
+
+                    for (var x = 0; x < 10; x++)
+                    {
+                        if (p + (x + 1) < Power.Length)
+                        {
+                            if (Power[p] == 0) // rider must be applying power for next 10 seconds
+                            {
+                                break;
+                            }
+                            currentPowers.Add(Power[p]); // get power for the next 14 seconds
+                            proceedingPowers.Add(Power[p + 1]); // get power for the next 14 seconds starting at current power +1
+                        }
+                    }
+
+                    if (currentPowers.Count == 0) // no powers added to the last
+                    {
+                        break;
+                    }
+
+                    var currentPowersAverage = currentPowers.Average();
+                    var proceedingPowersAverage = proceedingPowers.Average();
+
+                    // check for potential interval
+                    if (currentPowersAverage < proceedingPowersAverage)
+                    {
+                        if (!potentialIntervalDetected)
+                        {
+                            potentialIntervalStart = p;
+                            potentialIntervalDetected = true;
+                        }
+                    }
+                    else // possible that cyclist built up speed and reached interval speed to maintain
+                    {
+                        int maintain = Power[p];
+
+                        int percentage = ((maintain * 40) / 100);
+                        int minpower = maintain - percentage;
+                        int maxpower = maintain + percentage;
+                        int minInterval = 15; // interval power must be maintained for atleast 15 seconds
+
+                        int timer = 0;
+                        int counter = 1;
+                        for (var q = p; q < Power.Length; q++)
+                        {
+                            if (Power[q] > minpower)
+                            {
+                                timer += interval * counter;
+                            }
+                            else
+                            {
+                                if (timer > minInterval)
+                                {
+                                    intervalDetected = true;
+                                    detected = detected + 1;
+
+                                    detectedIntervalEnd = q * interval;
+                                    potentialIntervalStart = potentialIntervalStart * interval;
+
+                                    TimeSpan starting = new TimeSpan();
+                                    starting = starting.Add(TimeSpan.FromSeconds(potentialIntervalStart));
+                                    TimeSpan ending = new TimeSpan();
+                                    ending = ending.Add(TimeSpan.FromSeconds(detectedIntervalEnd));
+
+                                    detectedInterval.Add(potentialIntervalStart.ToString() + ":" + detectedIntervalEnd.ToString());
+                                    detectedIntervals.Add("Interval " + detected + "     " + starting.ToString() + " - " + ending.ToString());
+
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    if (intervalDetected)
+                    {
+                        i = (int)detectedIntervalEnd; // loop is set to end of detection
+                        potentialIntervalStart = detectedIntervalEnd; // loop is set to end of detection
+                        break;
+                    }
+                    
+                }
+            }
+            
+            detectedIntervals.ForEach(Console.WriteLine);
+            DetectedIntervalBox.DataSource = detectedIntervals;
+        }
+        
 
 
         private string zedGraphControl1_PointValueEvent(ZedGraph.ZedGraphControl sender, ZedGraph.GraphPane pane, ZedGraph.CurveItem curve, int iPt)
@@ -692,7 +796,7 @@ namespace SE_B_Assignment1
                 // calculate a rolling 30 second average of the preceding time points after 30 seconds
                 int timeset = 30 / interval;
                 List<double> movingAverages = Enumerable
-                .Range(0, powers.Count - timeset + 1)
+                .Range(0, powers.Count - timeset)
                 .Select(n => powers.Skip(n).Take(timeset).Average())
                 .ToList();
 
@@ -893,8 +997,8 @@ namespace SE_B_Assignment1
 
             if (HeartRateMenuItem.Checked)
             {
-                LineItem HeartRateCurve = zedGraphControl1.GraphPane.AddCurve("Heart Rate",
-                HeartRate1, Color.Blue, SymbolType.None);
+                LineItem HeartRateCurve = zedGraphControl1.GraphPane.AddCurve("Heart Rate (Comparison)",
+                HeartRate1, Color.DarkBlue, SymbolType.None);
             }
 
             if (SpeedMenuItem.Checked && SpeedCheck)
@@ -904,19 +1008,19 @@ namespace SE_B_Assignment1
 
             if (AltitudeMenuItem.Checked && AltCheck)
             {
-                LineItem AltitudeCurve = zedGraphControl1.GraphPane.AddCurve("Altitude",
-                Altitude1, Color.Green, SymbolType.None);
+                LineItem AltitudeCurve = zedGraphControl1.GraphPane.AddCurve("Altitude (Comparison)",
+                Altitude1, Color.DarkGreen, SymbolType.None);
             }
 
             if (CadenceMenuItem.Checked && CadenceCheck)
             {
-                LineItem CadenceCurve = zedGraphControl1.GraphPane.AddCurve("Cadence",
-                  Cadeance1, Color.Purple, SymbolType.None);
+                LineItem CadenceCurve = zedGraphControl1.GraphPane.AddCurve("Cadence (Comparison)",
+                  Cadeance1, Color.MediumPurple, SymbolType.None);
             }
             if (PowerMenuItem.Checked && PowerCheck)
             {
-                LineItem PowerCurve = zedGraphControl1.GraphPane.AddCurve("Power",
-                  Power1, Color.Orange, SymbolType.None);
+                LineItem PowerCurve = zedGraphControl1.GraphPane.AddCurve("Power (Comparison)",
+                  Power1, Color.DarkOrange, SymbolType.None);
             }
 
 
@@ -1094,6 +1198,7 @@ namespace SE_B_Assignment1
                 SetFileVars(); //set varSort Class
                 PlotGraph(); 
                 DataGridViewPlot();
+                IntervalDetection();
             }
            
         }

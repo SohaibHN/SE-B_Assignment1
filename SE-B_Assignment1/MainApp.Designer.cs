@@ -98,6 +98,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.NormalPower = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
+            this.DetectedIntervalBox = new System.Windows.Forms.ListBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -754,11 +755,20 @@
             this.label25.TabIndex = 1055;
             this.label25.Text = "Normalized Power:";
             // 
+            // DetectedIntervalBox
+            // 
+            this.DetectedIntervalBox.FormattingEnabled = true;
+            this.DetectedIntervalBox.Location = new System.Drawing.Point(13, 592);
+            this.DetectedIntervalBox.Name = "DetectedIntervalBox";
+            this.DetectedIntervalBox.Size = new System.Drawing.Size(326, 186);
+            this.DetectedIntervalBox.TabIndex = 1057;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1534, 792);
+            this.Controls.Add(this.DetectedIntervalBox);
             this.Controls.Add(this.NormalPower);
             this.Controls.Add(this.label25);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -902,6 +912,7 @@
         private System.Windows.Forms.DataGridView CompareGridView;
         private System.Windows.Forms.Label NormalPower;
         private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.ListBox DetectedIntervalBox;
     }
 }
 
