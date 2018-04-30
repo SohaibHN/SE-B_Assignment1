@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace SE_B_Assignment1
 {
-    class HRFileSort
+    public class HRFileSort
     {
 
-        public List<string> HRSpeed = new List<string>();
-        public List<string> heartrate = new List<string>();
-        public List<string> cadence = new List<string>();
-        public List<string> altitude = new List<string>();
-        public List<string> power = new List<string>();
-        public List<string> powerbalance = new List<string>();
-        public List<string> airpressure = new List<string>();
-        public bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, AirPressureCheck;
+        public static List<string> HRSpeed = new List<string>();
+        public static List<string> heartrate = new List<string>();
+        public static List<string> cadence = new List<string>();
+        public static List<string> altitude = new List<string>();
+        public static List<string> power = new List<string>();
+        public static List<string> powerbalance = new List<string>();
+        public static List<string> airpressure = new List<string>();
+        public static bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, AirPressureCheck;
 
-        public int interval;
+        public static int interval;
 
         public void FileDataManip(List<string> HRData, List<string> Params)
         {
@@ -75,8 +75,12 @@ namespace SE_B_Assignment1
                 }
                 if (PowerBICheck)
                 {
-                    powerbalance.Add(Splitter[i]);
-                    i++;
+                    if (5 < Splitter.Length)
+                    {
+                        powerbalance.Add(Splitter[i]);
+                        i++;
+                    }
+                    else { PowerBICheck = false; }
                 }
                 if (AirPressureCheck)
                 {

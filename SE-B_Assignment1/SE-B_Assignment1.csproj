@@ -53,6 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HRFileSort.cs" />
+    <Compile Include="IntervalView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IntervalView.Designer.cs">
+      <DependentUpon>IntervalView.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainApp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +67,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="IntervalView.resx">
+      <DependentUpon>IntervalView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainApp.resx">
       <DependentUpon>MainApp.cs</DependentUpon>
     </EmbeddedResource>
