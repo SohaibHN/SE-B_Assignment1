@@ -37,7 +37,6 @@ namespace SE_B_Assignment1
         List<string> powerbalance3 = new List<string>();
 
         bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck;
-        bool OptionChanged = false;
         static TimeSpan start;
         TimeSpan end;
 

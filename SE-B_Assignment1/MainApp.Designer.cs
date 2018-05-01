@@ -80,6 +80,8 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.CompareGridView = new System.Windows.Forms.DataGridView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label23 = new System.Windows.Forms.Label();
+            this.SummarySec1 = new System.Windows.Forms.NumericUpDown();
             this.SummarySections = new System.Windows.Forms.DataGridView();
             this.LengthLabel = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -107,8 +109,6 @@
             this.label28 = new System.Windows.Forms.Label();
             this.ViewIntervalDetails = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.SummarySec1 = new System.Windows.Forms.NumericUpDown();
-            this.label23 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -118,11 +118,11 @@
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CompareGridView)).BeginInit();
             this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SummarySec1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SummarySections)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FTPInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HRUserInput)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SummarySec1)).BeginInit();
             this.SuspendLayout();
             // 
             // zedGraphControl1
@@ -605,6 +605,23 @@
             this.tabPage4.Text = "tabPage4";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(6, 10);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(102, 13);
+            this.label23.TabIndex = 1063;
+            this.label23.Text = "Amount of Sections:";
+            // 
+            // SummarySec1
+            // 
+            this.SummarySec1.Location = new System.Drawing.Point(110, 8);
+            this.SummarySec1.Name = "SummarySec1";
+            this.SummarySec1.Size = new System.Drawing.Size(46, 20);
+            this.SummarySec1.TabIndex = 1063;
+            this.SummarySec1.ValueChanged += new System.EventHandler(this.SummarySec1_ValueChanged);
+            // 
             // SummarySections
             // 
             this.SummarySections.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -771,7 +788,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.zedGraphControl1, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 1, 1);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(358, 27);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(358, 29);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -847,23 +864,6 @@
             this.ViewIntervalDetails.Text = "View Interval Details";
             this.ViewIntervalDetails.UseVisualStyleBackColor = true;
             this.ViewIntervalDetails.Click += new System.EventHandler(this.ViewIntervalDetails_Click);
-            // 
-            // SummarySec1
-            // 
-            this.SummarySec1.Location = new System.Drawing.Point(110, 8);
-            this.SummarySec1.Name = "SummarySec1";
-            this.SummarySec1.Size = new System.Drawing.Size(46, 20);
-            this.SummarySec1.TabIndex = 1063;
-            this.SummarySec1.ValueChanged += new System.EventHandler(this.SummarySec1_ValueChanged);
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 10);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(102, 13);
-            this.label23.TabIndex = 1063;
-            this.label23.Text = "Amount of Sections:";
             // 
             // Form1
             // 
@@ -942,11 +942,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.CompareGridView)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SummarySec1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SummarySections)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FTPInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HRUserInput)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SummarySec1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

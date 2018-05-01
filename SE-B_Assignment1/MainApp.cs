@@ -30,14 +30,14 @@ namespace SE_B_Assignment1
         List<string> power2 = new List<string>();
         List<string> powerbalance2 = new List<string>();
 
-        List<string> heartrate3 = new List<string>();
-        List<string> HRSpeed3 = new List<string>();
-        List<string> cadence3 = new List<string>();
-        List<string> altitude3 = new List<string>();
-        List<string> power3 = new List<string>();
-        List<string> powerbalance3 = new List<string>();
+        List<int> heartrate3 = new List<int>();
+        List<int> HRSpeed3 = new List<int>();
+        List<int> cadence3 = new List<int>();
+        List<int> altitude3 = new List<int>();
+        List<int> power3 = new List<int>();
+        List<int> powerbalance3 = new List<int>();
 
-        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck;
+        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck, FileComparsion;
         bool OptionChanged = false;
         static TimeSpan start;
         TimeSpan end;
@@ -580,13 +580,14 @@ namespace SE_B_Assignment1
 
 
             int StartPoint = (int)sender.GraphPane.XAxis.Scale.Min;
-            int EndPoint = (int)sender.GraphPane.XAxis.Scale.Max - 1;
+            int EndPoint = (int)sender.GraphPane.XAxis.Scale.Max;
             int Difference = EndPoint - StartPoint;
 
 
             if (heartrate.Count > StartPoint && heartrate.Count >= EndPoint && FileLoaded)
             {
 
+                zoomIn = true;
                 //Heart Rate
                 List<int> HeartRateList = heartrate.ConvertAll(int.Parse);
                 List<int> UpdatedHeartRate;
@@ -628,7 +629,62 @@ namespace SE_B_Assignment1
                     UpdatedPowerList = PowerList.GetRange(StartPoint, Difference);
                     Power = UpdatedPowerList.ToArray();
                 }
+                if (PowerBICheck)
+                {
+                    //Power
+                    List<int> PowerList = powerbalance.ConvertAll(int.Parse);
+                    List<int> UpdatedPowerList;
+                    UpdatedPowerList = PowerList.GetRange(StartPoint, Difference);
+                    PowerBalance = UpdatedPowerList.ToArray();
+                }
+                /*
+                if (FileComparsion) // FILE TWO (FOR COMPARION ZOOMING)
+                {
+                    if (StartPoint < 0) { StartPoint = System.Math.Abs(StartPoint); }
+                    UpdatedHeartRate = heartrate3.GetRange(StartPoint, Difference);
+                    heartrate3 = UpdatedHeartRate.ToList();
+
+                    if (SpeedCheck)
+                    {
+                        //Speed
+                        List<int> UpdatedSpeedList;
+                        UpdatedSpeedList = HRSpeed3.GetRange(StartPoint, Difference);
+                        HRSpeed3 = UpdatedSpeedList.ToList();
+                    }
+
+                    if (AltCheck)
+                    {
+
+                        //Altitude
+                        List<int> UpdatedAltitudeList;
+                        UpdatedAltitudeList = altitude3.GetRange(StartPoint, Difference);
+                        altitude3 = UpdatedAltitudeList.ToList();
+                    }
+                    if (CadenceCheck)
+                    {
+                        //Cadence
+                        List<int> UpdatedCadenceList;
+                        UpdatedCadenceList = cadence3.GetRange(StartPoint, Difference);
+                        cadence3 = UpdatedCadenceList.ToList();
+                    }
+                    if (PowerCheck)
+                    {
+                        //Power
+                        List<int> UpdatedPowerList;
+                        UpdatedPowerList = power3.GetRange(StartPoint, Difference);
+                        power3 = UpdatedPowerList.ToList();
+                    }
+                    if (PowerBICheck)
+                    {
+                        //Power
+                        List<int> UpdatedPowerList;
+                        UpdatedPowerList = powerbalance3.GetRange(StartPoint, Difference);
+                        powerbalance3 = UpdatedPowerList.ToList();
+                    }
+                }
+                */
                 SummaryData();
+
             }
 
         }
@@ -774,84 +830,9 @@ namespace SE_B_Assignment1
             //zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane); //unzooms graph whenever it is reloaded
         }
 
-        private void DataGridSummarySectionsPlot()
-        {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Section");
-            dt.Columns.Add("Average Heart Rate (BPM)");
-            //int timer = interval;
-            TimeSpan timer = start; // sets timer to start time
-            var SplitHeartRate = HeartRate.Split((int)SummarySec1.Value);
-            var SplitSpeed = Speed.Split((int)SummarySec1.Value);
-            var SplitAlt = Altitude.Split((int)SummarySec1.Value);
-            var SplitCadence = Cadeance.Split((int)SummarySec1.Value);
-            var SplitPower = Power.Split((int)SummarySec1.Value);
-
-            //adds columns to datagrid based on smode values
-            if (SpeedCheck)
-            {
-                dt.Columns.Add("Average Speed " + "(" + type2 + ")");
-            }
-            if (CadenceCheck)
-            {
-                dt.Columns.Add("Average Cadence (RPM)");
-            }
-            if (AltCheck)
-            {
-                dt.Columns.Add("Average Altitude (M)");
-            }
-            if (PowerCheck)
-            {
-                dt.Columns.Add("Average Power (Watts)");
-            }
-            for (int i = 0; i < SummarySec1.Value; i++)
-            {
-                DataRow dr = dt.NewRow();
-                
-                var ResultList = SplitHeartRate.ElementAt(i).ToList();
-                double average = ResultList.Average();
-                string AverageString = average.ToString("0.##");
-                dr["Average Heart Rate (BPM)"] = AverageString;
-                int section = i + 1;
-                dr["Section"] = "Section " + section;
-
-                if (SpeedCheck)
-                {
-                    ResultList = SplitSpeed.ElementAt(i).ToList();
-                    average = ResultList.Average();
-                    double speed = average / 10;
-                    string speedstring = speed.ToString("N0") + type;
-                    dr["Average Speed " + "(" + type2 + ")"] = speedstring;
-                }
-                if (CadenceCheck)
-                {
-                    ResultList = SplitCadence.ElementAt(i).ToList();
-                    average = ResultList.Average();
-                    AverageString = average.ToString("0.##");
-                    dr["Average Cadence (RPM)"] = AverageString;
-                }
-                if (AltCheck)
-                {
-                    ResultList = SplitAlt.ElementAt(i).ToList();
-                    average = ResultList.Average();
-                    AverageString = average.ToString("0.##");
-                    dr["Average Altitude (M)"] = AverageString;
-                }
-                if (PowerCheck)
-                {
-                    ResultList = SplitPower.ElementAt(i).ToList();
-                    average = ResultList.Average();
-                    AverageString = average.ToString("0.##");
-                    dr["Average Power (Watts)"] = AverageString;
-                }
-
-                dt.Rows.Add(dr);
-            }
-            SummarySections.DataSource = dt;
-        }
-
         private void SummaryData() // summary data calculations to display in gui
         {
+            if (HeartRate.Length == 0) { return; }
             MaxHR.Text = HeartRate.Max().ToString() + " bpm";
             MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString() + " bpm";
             BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0") + " bpm";
@@ -998,7 +979,8 @@ namespace SE_B_Assignment1
                     //FileDataLabels(Params);
                     //FileNameLabel.Text = FileNameLabel.Text + " " + System.IO.Path.GetFileName(ofd.FileName);
 
-                    FileLoaded = true;
+                   // FileLoaded = true;
+                    FileComparsion = true;
                 }
                 catch (Exception)
                 {
@@ -1018,12 +1000,12 @@ namespace SE_B_Assignment1
                 power3 = power;
                 powerbalance3 = powerbalance; */
 
-                HRSpeed3 = HRSpeed.ToList();
-                heartrate3 = heartrate.ToList();
-                cadence3 = cadence.ToList();
-                altitude3 = altitude.ToList();
-                power3 = power.ToList();
-                powerbalance3 = powerbalance.ToList();
+                HRSpeed3 = Speed.ToList();
+                heartrate3 = HeartRate.ToList();
+                cadence3 = Cadeance.ToList();
+                altitude3 = Altitude.ToList();
+                power3 = Power.ToList();
+                powerbalance3 = PowerBalance.ToList();
 
                 HRSpeed = HRSpeed2.ToList();
                 heartrate = heartrate2.ToList();
@@ -1195,6 +1177,7 @@ namespace SE_B_Assignment1
         private void button1_Click(object sender, EventArgs e)
         {
             FTPMaxCalc();
+            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
         }
 
         private void ViewIntervalDetails_Click(object sender, EventArgs e)
@@ -1217,30 +1200,23 @@ namespace SE_B_Assignment1
 
         private void FTPMaxCalc() //Average % calc of user input against max power (watts)
         {
-            double intValue = 0;
-            if (!Double.TryParse(FTPInput.Text, out intValue))
+            double FTPValue = (double)FTPInput.Value;
+
+            if (PowerCheck)
             {
-                MessageBox.Show("Not a number");
-                IFLabel.Text = "Enter an FTP Value";
-                TSSLabel.Text = "Enter an FTP Value";
-            }
-            else
-            {
-                //intValue = intValue * 0.93;
-                if (PowerCheck)
+                int percentage = (int)Math.Round((double)(100 * Power.Max()) / FTPValue);
+                FTPLabel.Text = "(%) of Max Power: " + percentage.ToString() + "%";
+
+                if (FTPValue == 0)
                 {
-                    int percentage = (int)Math.Round((double)(100 * Power.Max()) / intValue);
-                    FTPLabel.Text = "(%) of Max Power: " + percentage.ToString() + "%";
-                    if (intValue == 0)
-                    {
-                        IFLabel.Text = "Enter an FTP Value";
-                        TSSLabel.Text = "Enter an FTP Value";
-                    }
-                    else
-                    {
-                        AdvancedMetricsCalc(intValue);
-                    }                
+                    IFLabel.Text = "Enter an FTP Value";
+                    TSSLabel.Text = "Enter an FTP Value";
                 }
+                else
+                {
+                    //MessageBox.Show(intValue.ToString());
+                    AdvancedMetricsCalc(FTPValue);
+                }                               
             }
         }
         
@@ -1344,6 +1320,7 @@ namespace SE_B_Assignment1
                 ResetGraphObjs();
                 DetectedIntervalBox.DataSource = null;
                 DetectedIntervalBox.Items.Clear();
+                zoomIn = false;
                 try
                 {
                     List<string> HRData = File.ReadLines(ofd.FileName)
@@ -1367,6 +1344,7 @@ namespace SE_B_Assignment1
                     FileNameLabel.Text = System.IO.Path.GetFileName(ofd.FileName);
 
                     FileLoaded = true;
+                    FileComparsion = false;
                 }
                 catch (Exception)
                 {
@@ -1420,7 +1398,7 @@ namespace SE_B_Assignment1
 
             start = StartTimeSpan; //assign start to use in PlotGraph/DataGridViewPlot
         }
-
+        #region DataGrid Plotting Methods
         private void DataGridViewPlot()
         {
 
@@ -1498,7 +1476,342 @@ namespace SE_B_Assignment1
                 timer = timer.Add(TimeSpan.FromSeconds(interval));
             }
             dataGridView1.DataSource = dt;
-            //listBox3.DataSource = dt;
+            
+        }
+
+        /// <summary>  
+        ///  Plots summary data into gridview based on user input on how many sections
+        /// </summary> 
+        private void DataGridSummarySectionsPlot()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("File");
+
+
+            dt.Columns.Add("Section");
+            dt.Columns.Add("Average Heart Rate (BPM)");
+
+            var SplitHeartRate = HeartRate.Split((int)SummarySec1.Value);
+            var SplitSpeed = Speed.Split((int)SummarySec1.Value);
+            var SplitAlt = Altitude.Split((int)SummarySec1.Value);
+            var SplitCadence = Cadeance.Split((int)SummarySec1.Value);
+            var SplitPower = Power.Split((int)SummarySec1.Value);
+            var SplitPowerBI = PowerBalance.Split((int)SummarySec1.Value);
+            string balance = null;
+            byte index = new byte();
+            byte index2 = new byte();
+            double AverageSpeed, AverageSpeed2, AverageCadence, AverageCadence2, AverageAlt, AverageAlt2, AveragePower, AveragePower2, NormalPowerCalc2, IF, IF2, TSS, TSS2;
+            AverageSpeed = AverageSpeed2 = AverageCadence = AverageCadence2 = AverageAlt = AverageAlt2 = AveragePower = AveragePower2 = NormalPowerCalc2 = IF = IF2 = TSS = TSS2 = 0;
+            //adds columns to datagrid based on smode values
+            if (SpeedCheck)
+            {
+                dt.Columns.Add("Average Speed " + "(" + type2 + ")");
+            }
+            if (CadenceCheck)
+            {
+                dt.Columns.Add("Average Cadence (RPM)");
+            }
+            if (AltCheck)
+            {
+                dt.Columns.Add("Average Altitude (M)");
+            }
+            if (PowerCheck)
+            {
+                dt.Columns.Add("Average Power (Watts)");
+            if (PowerBICheck)
+            {
+                dt.Columns.Add("Average Power Balancing (Left/Right)");
+                dt.Columns.Add("Average Power Pedaling Index");
+            }
+                dt.Columns.Add("Normalised Power (Watts)");
+                dt.Columns.Add("Intensitiy Factor");
+                dt.Columns.Add("Training Stress Score");
+            }
+
+            for (int i = 0; i < SummarySec1.Value; i++)
+            {
+                DataRow dr = dt.NewRow(); // First FILE
+                dr["File"] = FileNameLabel.Text;
+
+                int section = i + 1;
+
+                var ResultList = SplitHeartRate.ElementAt(i).ToList();
+                if (ResultList.Count == 0) { break; }
+                double AverageHR = ResultList.Average();
+                string AverageString = AverageHR.ToString("0.##");
+                dr["Average Heart Rate (BPM)"] = AverageString;
+                dr["Section"] = "Section " + section;
+
+
+                if (SpeedCheck)
+                {
+                    ResultList = SplitSpeed.ElementAt(i).ToList();
+                    double TotalAverageSpeed = ResultList.Average();
+                    AverageSpeed = TotalAverageSpeed / 10;
+                    string speedstring = AverageSpeed.ToString("0.##") + type;
+                    dr["Average Speed " + "(" + type2 + ")"] = speedstring;
+                }
+                if (CadenceCheck)
+                {
+                    ResultList = SplitCadence.ElementAt(i).ToList();
+                    AverageCadence = ResultList.Average();
+                    AverageString = AverageCadence.ToString("0.##");
+                    dr["Average Cadence (RPM)"] = AverageString;
+                }
+                if (AltCheck)
+                {
+                    ResultList = SplitAlt.ElementAt(i).ToList();
+                    AverageAlt = ResultList.Average();
+                    AverageString = AverageAlt.ToString("0.##");
+                    dr["Average Altitude (M)"] = AverageString;
+                }
+                if (PowerBICheck)
+                {
+                    ResultList = SplitPowerBI.ElementAt(i).ToList();
+                    int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
+
+                    byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                    index = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+
+                    int right = 100 - left;
+                    balance = left.ToString() + "/" + right.ToString();
+
+                    dr["Average Power Balancing (Left/Right)"] = balance;
+                    dr["Average Power Pedaling Index"] = index;
+                }
+                if (PowerCheck)
+                {
+                    ResultList = SplitPower.ElementAt(i).ToList();
+                    AveragePower = ResultList.Average();
+                    AverageString = AveragePower.ToString("0.##");
+                    dr["Average Power (Watts)"] = AverageString;
+                    try
+                    {
+                        // calculate a rolling 30 second average of the preceding time points after 30 seconds
+                        int timeset = 30 / interval;
+
+                        List<double> movingAverages = Enumerable
+                        .Range(0, ResultList.Count - timeset)
+                        .Select(n => ResultList.Skip(n).Take(timeset).Average())
+                        .ToList();
+
+                        List<double> averagesToFourthPower = PowerUp(movingAverages, 4);
+
+                        // find the average of values raised to fourth power
+                        double PowerAverage = averagesToFourthPower.Average();
+
+                        // take the fourth root of the average values raised to the fourth power
+                        NormalPowerCalc = Math.Round(Math.Pow(PowerAverage, 1.0 / 4), 2, MidpointRounding.AwayFromZero);
+                        AverageString = NormalPowerCalc.ToString("0.##");
+                        dr["Normalised Power (Watts)"] = AverageString;
+                        double FTPValue = (double)FTPInput.Value;
+                        string AverageString1, AverageString2;
+                        if (FTPValue == 0)
+                        {
+                            AverageString1 = AverageString2 = "Enter an FTP Value";
+                        }
+                        else
+                        {
+                            //MessageBox.Show(FTPValue.ToString());
+                            IF = Math.Round(NormalPowerCalc / FTPValue, 2, MidpointRounding.AwayFromZero);
+                            int secondstime = ResultList.Count * interval;
+                            TSS = Math.Round(((secondstime * NormalPowerCalc * IF) / (FTPValue * 3600)) * 100, MidpointRounding.AwayFromZero);
+                            AverageString1 = IF.ToString("0.##");
+                            AverageString2 = TSS.ToString("0.##");
+                        }
+
+                        dr["Intensitiy Factor"] = AverageString1;
+                        dr["Training Stress Score"] = AverageString2;
+                    }
+                    catch { MessageBox.Show("Not enough data to calculate Normalised Power"); }
+                }
+
+                dt.Rows.Add(dr);
+
+                if (FileComparsion)
+                {
+                    dr = dt.NewRow(); // file 2
+                    SplitHeartRate = heartrate3.Split((int)SummarySec1.Value);
+                    SplitSpeed = HRSpeed3.Split((int)SummarySec1.Value);
+                    SplitAlt = altitude3.Split((int)SummarySec1.Value);
+                    SplitCadence = cadence3.Split((int)SummarySec1.Value);
+                    SplitPower = power3.Split((int)SummarySec1.Value);
+                    SplitPowerBI = powerbalance3.Split((int)SummarySec1.Value);
+
+                    //balance = null;
+                    index2 = new byte();
+                    dr["File"] = "File 2";
+
+                    ResultList = SplitHeartRate.ElementAt(i).ToList();
+                    if (ResultList.Count == 0) { break; }
+                    double AverageHR2 = ResultList.Average();
+                    AverageString = AverageHR2.ToString("0.##");
+                    dr["Average Heart Rate (BPM)"] = AverageString;
+                    dr["Section"] = "Section " + section;
+
+                    if (SpeedCheck)
+                    {
+                        ResultList = SplitSpeed.ElementAt(i).ToList();
+                        double TotalAverageSpeed = ResultList.Average();
+                        AverageSpeed2 = TotalAverageSpeed / 10;
+                        string speedstring = AverageSpeed2.ToString("0.##") + type;
+                        dr["Average Speed " + "(" + type2 + ")"] = speedstring;
+                    }
+                    if (CadenceCheck)
+                    {
+                        ResultList = SplitCadence.ElementAt(i).ToList();
+                        AverageCadence2 = ResultList.Average();
+                        AverageString = AverageCadence2.ToString("0.##");
+                        dr["Average Cadence (RPM)"] = AverageString;
+                    }
+                    if (AltCheck)
+                    {
+                        ResultList = SplitAlt.ElementAt(i).ToList();
+                        AverageAlt2 = ResultList.Average();
+                        AverageString = AverageAlt2.ToString("0.##");
+                        dr["Average Altitude (M)"] = AverageString;
+                    }
+                    if (PowerBICheck)
+                    {
+                        ResultList = SplitPowerBI.ElementAt(i).ToList();
+                        int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
+
+                        byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                        index2 = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+
+                        int right = 100 - left;
+                        balance = left.ToString() + "/" + right.ToString();
+
+                        dr["Average Power Balancing (Left/Right)"] = balance;
+                        dr["Average Power Pedaling Index"] = index2;
+                    }
+                    if (PowerCheck)
+                    {
+                        ResultList = SplitPower.ElementAt(i).ToList();
+                        AveragePower2 = ResultList.Average();
+                        AverageString = AveragePower2.ToString("0.##");
+                        dr["Average Power (Watts)"] = AverageString;
+                        try
+                        {
+                            // calculate a rolling 30 second average of the preceding time points after 30 seconds
+                            int timeset = 30 / interval;
+
+                            List<double> movingAverages = Enumerable
+                            .Range(0, ResultList.Count - timeset)
+                            .Select(n => ResultList.Skip(n).Take(timeset).Average())
+                            .ToList();
+
+                            List<double> averagesToFourthPower = PowerUp(movingAverages, 4);
+
+                            // find the average of values raised to fourth power
+                            double PowerAverage = averagesToFourthPower.Average();
+
+                            // take the fourth root of the average values raised to the fourth power
+                            NormalPowerCalc2 = Math.Round(Math.Pow(PowerAverage, 1.0 / 4), 2, MidpointRounding.AwayFromZero);                           
+                            AverageString = NormalPowerCalc.ToString("0.##");
+                            dr["Normalised Power (Watts)"] = AverageString;
+                            double FTPValue = (double)FTPInput.Value;
+                            string AverageString1, AverageString2;
+                            if (FTPValue == 0)
+                            {
+                                AverageString1 = AverageString2 = "Enter an FTP Value";
+                            }
+                            else
+                            {
+                                //MessageBox.Show(FTPValue.ToString());
+                                IF2 = Math.Round(NormalPowerCalc2 / FTPValue, 2, MidpointRounding.AwayFromZero);
+                                int secondstime = ResultList.Count * interval;
+                                TSS2 = Math.Round(((secondstime * NormalPowerCalc2 * IF2) / (FTPValue * 3600)) * 100, MidpointRounding.AwayFromZero);
+                                AverageString1 = IF2.ToString("0.##");
+                                AverageString2 = TSS2.ToString("0.##");
+                            }
+
+                            dr["Intensitiy Factor"] = AverageString1;
+                            dr["Training Stress Score"] = AverageString2;
+                        }
+                        catch { MessageBox.Show("Not enough data to calculate Normalised Power"); }
+                    }
+
+                    dt.Rows.Add(dr);
+
+                    dr = dt.NewRow(); // difference
+                    balance = null;
+                    index = new byte();
+                    double difference;
+                    dr["File"] = "Difference (+/-)";
+                    difference = AverageHR - AverageHR2;
+                    dr["Average Heart Rate (BPM)"] = difference;
+                    dr["Section"] = "Section " + section;
+
+                    if (SpeedCheck)
+                    {
+                        difference = AverageSpeed - AverageSpeed2;
+                        string speedstring = difference.ToString("0.##");
+                        dr["Average Speed " + "(" + type2 + ")"] = speedstring;
+                    }
+                    if (CadenceCheck)
+                    {
+                        difference = AverageCadence - AverageCadence2;
+                        AverageString = difference.ToString("0.##");
+
+                        dr["Average Cadence (RPM)"] = AverageString;
+                    }
+                    if (AltCheck)
+                    {
+                        difference = AverageCadence - AverageCadence2;
+                        AverageString = difference.ToString("0.##");
+
+                        dr["Average Altitude (M)"] = AverageString;
+                    }
+                    if (PowerBICheck)
+                    {
+                        ResultList = SplitPowerBI.ElementAt(i).ToList();
+                        int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
+
+                        byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                        index2 = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+
+                        int right = 100 - left;
+                        balance = left.ToString() + "/" + right.ToString();
+
+                       // dr["Average Power Balancing (Left/Right)"] = balance;
+                       // dr["Average Power Pedaling Index"] = index2;
+                    }
+                    if (PowerCheck)
+                    {
+                        difference = AveragePower - AveragePower2;
+                        AverageString = difference.ToString("0.##");
+                        dr["Average Power (Watts)"] = AverageString;
+                    }
+                    if (PowerBICheck)
+                    {
+                        difference = NormalPowerCalc - NormalPowerCalc2;
+                        AverageString = difference.ToString("0.##");
+
+                        dr["Normalised Power (Watts)"] = AverageString;
+                        double FTPValue = (double)FTPInput.Value;
+                        string AverageString1, AverageString2;
+                        if (FTPValue == 0)
+                        {
+                            AverageString1 = AverageString2 = "Enter an FTP Value";
+                        }
+                        else
+                        {
+                            //MessageBox.Show(FTPValue.ToString());
+                            difference = IF - IF2;
+                            AverageString1 = difference.ToString("0.##");
+
+                            difference = TSS - TSS2;
+                            AverageString2 = difference.ToString("0.##");
+                        }
+
+                        dr["Intensitiy Factor"] = AverageString1;
+                        dr["Training Stress Score"] = AverageString2;
+                    }
+                    dt.Rows.Add(dr);
+                }                
+            }
+            SummarySections.DataSource = dt;
         }
 
         private void DataGridViewPlotCompare()
@@ -1535,7 +1848,7 @@ namespace SE_B_Assignment1
             }
             for (int i = 0; i < heartrate.Count; i++) 
             {
-                    DataRow dr = dt.NewRow();
+                    DataRow dr = dt.NewRow(); //file one
                     string balance = null;
                     byte index = new byte();
                     dr["File"] = "File 1";
@@ -1578,7 +1891,7 @@ namespace SE_B_Assignment1
 
                     dt.Rows.Add(dr);
                
-                    dr = dt.NewRow();
+                    dr = dt.NewRow(); // file 2
                     balance = null;
                     index = new byte();
                     dr["File"] = "File 2";
@@ -1587,7 +1900,7 @@ namespace SE_B_Assignment1
 
                     if (SpeedCheck)
                     {
-                        int speed = Int32.Parse(HRSpeed3[i]) / 10;
+                        int speed = HRSpeed3[i] / 10;
                         string speedstring = speed.ToString("N0") + type;
                         dr["Speed " + "(" + type2 + ")"] = speedstring;
                     }
@@ -1622,13 +1935,13 @@ namespace SE_B_Assignment1
                     dt.Rows.Add(dr);
                 
 
-                    dr = dt.NewRow();
+                    dr = dt.NewRow(); // difference
                     balance = null;
                     index = new byte();
                     int difference;
                     dr["File"] = "+/-";
                     int hrcompare1 = Int32.Parse(heartrate[i]);
-                    int hrcompare2 = Int32.Parse(heartrate3[i]);
+                    int hrcompare2 = heartrate3[i];
                     difference = hrcompare1 - hrcompare2;
                     dr["Heart Rate (BPM)"] = difference;
                     dr["Interval Time (Seconds)"] = timer.ToString("hh\\:mm\\:ss");
@@ -1636,7 +1949,7 @@ namespace SE_B_Assignment1
                     if (SpeedCheck)
                     {
                         int speedcompare1 = Int32.Parse(HRSpeed[i]) / 10;
-                        int speedcompare2 = Int32.Parse(HRSpeed3[i]) / 10;
+                        int speedcompare2 = HRSpeed3[i] / 10;
 
                         difference = speedcompare1 - speedcompare2;
 
@@ -1661,21 +1974,21 @@ namespace SE_B_Assignment1
                     if (CadenceCheck)
                     {
                         int compare1 = Int32.Parse(cadence[i]);
-                        int compare2 = Int32.Parse(cadence3[i]);
+                        int compare2 = cadence3[i];
                         difference = compare1 - compare2;
                         dr["Cadence (RPM)"] = difference;
                     }
                     if (AltCheck)
                     {
                         int compare1 = Int32.Parse(altitude[i]);
-                        int compare2 = Int32.Parse(altitude3[i]);
+                        int compare2 = altitude3[i];
                         difference = compare1 - compare2;
                         dr["Altitude (M)"] = difference;
                     }
                     if (PowerCheck)
                     {
                         int compare1 = Int32.Parse(power[i]);
-                        int compare2 = Int32.Parse(power3[i]);
+                        int compare2 = power3[i];
                         difference = compare1 - compare2;
                         dr["Power (Watts)"] = difference;
                     }
@@ -1686,6 +1999,8 @@ namespace SE_B_Assignment1
             CompareGridView.DataSource = dt;
             tabControl1.SelectTab(2);
         }
+
+#endregion
 
         private void Form1_Load(object sender, EventArgs e)
         {
