@@ -117,17 +117,21 @@ namespace SE_B_Assignment1
             StartPoint = (int)sender.GraphPane.XAxis.Scale.Min;
             EndPoint = (int)sender.GraphPane.XAxis.Scale.Max - 1;
             Difference = EndPoint - StartPoint;
+            
             SummaryZoomCalc();
         }
 
         public void SummaryZoomCalc()
         {
-            if (heartrate.Count > StartPoint && heartrate.Count >= EndPoint)
+            int test = Difference + StartPoint;
+
+            if (heartrate.Count > StartPoint && heartrate.Count >= EndPoint && test < heartrate.Count)
             {
 
                 //Heart Rate
                 List<int> HeartRateList = heartrate.ConvertAll(int.Parse);
                 List<int> UpdatedHeartRate;
+                if (StartPoint < 0) { StartPoint = System.Math.Abs(StartPoint); }
                 UpdatedHeartRate = HeartRateList.GetRange(StartPoint, Difference);
                 HeartRate = UpdatedHeartRate.ToArray();
 
@@ -214,7 +218,6 @@ namespace SE_B_Assignment1
         private void PlotGraph()
         {
             GraphPane myPane = zedGraphControl1.GraphPane;
-            myPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler(Axis_ScaleFormatEvent); //lets the x axis change to interval timespan rather than leaving it in seconds format
 
             zedGraphControl1.GraphPane.CurveList.Clear();
             zedGraphControl1.GraphPane.GraphObjList.Clear();
@@ -231,7 +234,8 @@ namespace SE_B_Assignment1
             StartPoint = start;
             EndPoint = end;
             Difference = EndPoint - StartPoint;
-            myPane.XAxis.Scale.Max = end;
+            myPane.XAxis.Scale.Max = Difference;
+            myPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler(Axis_ScaleFormatEvent); //lets the x axis change to interval timespan rather than leaving it in seconds format
 
             PointPairList HRSpeed1 = new PointPairList();
             PointPairList HeartRate1 = new PointPairList();
@@ -417,7 +421,7 @@ namespace SE_B_Assignment1
                 }
                 catch
                 {
-                    MessageBox.Show("30 Points required for Normalized Power Calc");
+                    //MessageBox.Show("30 Points required for Normalized Power Calc");
                 }
             }
         }

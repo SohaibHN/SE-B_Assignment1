@@ -60,6 +60,7 @@ namespace SE_B_Assignment1
             tabPage1.Text = @"Raw Data";
             tabPage2.Text = @"Table Data";
             tabPage3.Text = @"Comparsion Data";
+            tabPage4.Text = @"Summary Section Data";
             FTPInput.Maximum = 1000;
             HRUserInput.Maximum = 300;
             this.zedGraphControl1.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.zedGraphControl1_PointValueEvent);
@@ -108,7 +109,7 @@ namespace SE_B_Assignment1
 
                     double currentPowersAverage = currentPowers.Average();
                     double futurepowersAverage = futurepowers.Average();
-
+                    //Console.WriteLine(currentPowersAverage.ToString() + "/" + futurepowersAverage.ToString());
                     // check for potential interval
                     if (currentPowersAverage < futurepowersAverage)
                     {
@@ -116,30 +117,36 @@ namespace SE_B_Assignment1
                         {
                             potentialIntervalStart = p;
                             potentialIntervalDetected = true;
+                            //Console.WriteLine(potentialIntervalStart);
                         }
                     }
                     else // possible that cyclist built up speed and reached interval speed to maintain
                     {
 
                         int maintain = Power[p];
-
-                        // int percentage = ((maintain * 50) / 100);
-                        int percentage = maintain / 2;
+                        //Console.WriteLine(p.ToString());
+                        int percentage = ((maintain * 50) / 100);
                         int minpower = maintain - percentage;
                         int maxpower = maintain + percentage;
-                        int minInterval = 22; // interval power must be maintained for atleast 20 seconds
+                        int minInterval = 15; // interval power must be maintained for atleast 15 seconds
 
                         int timer = 0;
                         int counter = 1;
                    
                         for (int q = p; q < Power.Length; q++)
                         {
-                        //if (q == 0) { q = 1; }
+                            if (q == 0) { q = 1; }
+                            maintain = Power[q];
+                            percentage = ((maintain * 30) / 100);
+                            maxpower = maintain + percentage;
+                            minpower = maintain - percentage;
 
                             if (Power[q] > minpower && Power[q] < maxpower)
                             //if (Power[q] > minpower)
                             {
-                                timer += interval * counter;
+                                timer = interval * counter;
+                                counter++;
+                                
                             }
                             else
                             {
@@ -150,13 +157,13 @@ namespace SE_B_Assignment1
                                     detectedIntervalEnd = q;
                                     detectedInterval.Add(potentialIntervalStart.ToString() + ":" + detectedIntervalEnd.ToString());
 
-                                    detectedIntervalEnd = q * interval;
-                                    potentialIntervalStart = potentialIntervalStart * interval;
+                                    double intervalend = detectedIntervalEnd * interval;
+                                    double intervalstart = potentialIntervalStart * interval;
 
                                     TimeSpan starting = new TimeSpan();
-                                    starting = start.Add(TimeSpan.FromSeconds(potentialIntervalStart));
+                                    starting = start.Add(TimeSpan.FromSeconds(intervalstart));
                                     TimeSpan ending = new TimeSpan();
-                                    ending = start.Add(TimeSpan.FromSeconds(detectedIntervalEnd));
+                                    ending = start.Add(TimeSpan.FromSeconds(intervalend));
 
                                     
                                     detectedIntervals.Add("Interval " + detected + "     " + starting.ToString("hh\\:mm\\:ss") + " - " + ending.ToString("hh\\:mm\\:ss"));
@@ -583,6 +590,7 @@ namespace SE_B_Assignment1
                 //Heart Rate
                 List<int> HeartRateList = heartrate.ConvertAll(int.Parse);
                 List<int> UpdatedHeartRate;
+                if (StartPoint < 0) { StartPoint = System.Math.Abs(StartPoint); }
                 UpdatedHeartRate = HeartRateList.GetRange(StartPoint, Difference);
                 HeartRate = UpdatedHeartRate.ToArray();
 
@@ -766,6 +774,82 @@ namespace SE_B_Assignment1
             //zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane); //unzooms graph whenever it is reloaded
         }
 
+        private void DataGridSummarySectionsPlot()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Section");
+            dt.Columns.Add("Average Heart Rate (BPM)");
+            //int timer = interval;
+            TimeSpan timer = start; // sets timer to start time
+            var SplitHeartRate = HeartRate.Split((int)SummarySec1.Value);
+            var SplitSpeed = Speed.Split((int)SummarySec1.Value);
+            var SplitAlt = Altitude.Split((int)SummarySec1.Value);
+            var SplitCadence = Cadeance.Split((int)SummarySec1.Value);
+            var SplitPower = Power.Split((int)SummarySec1.Value);
+
+            //adds columns to datagrid based on smode values
+            if (SpeedCheck)
+            {
+                dt.Columns.Add("Average Speed " + "(" + type2 + ")");
+            }
+            if (CadenceCheck)
+            {
+                dt.Columns.Add("Average Cadence (RPM)");
+            }
+            if (AltCheck)
+            {
+                dt.Columns.Add("Average Altitude (M)");
+            }
+            if (PowerCheck)
+            {
+                dt.Columns.Add("Average Power (Watts)");
+            }
+            for (int i = 0; i < SummarySec1.Value; i++)
+            {
+                DataRow dr = dt.NewRow();
+                
+                var ResultList = SplitHeartRate.ElementAt(i).ToList();
+                double average = ResultList.Average();
+                string AverageString = average.ToString("0.##");
+                dr["Average Heart Rate (BPM)"] = AverageString;
+                int section = i + 1;
+                dr["Section"] = "Section " + section;
+
+                if (SpeedCheck)
+                {
+                    ResultList = SplitSpeed.ElementAt(i).ToList();
+                    average = ResultList.Average();
+                    double speed = average / 10;
+                    string speedstring = speed.ToString("N0") + type;
+                    dr["Average Speed " + "(" + type2 + ")"] = speedstring;
+                }
+                if (CadenceCheck)
+                {
+                    ResultList = SplitCadence.ElementAt(i).ToList();
+                    average = ResultList.Average();
+                    AverageString = average.ToString("0.##");
+                    dr["Average Cadence (RPM)"] = AverageString;
+                }
+                if (AltCheck)
+                {
+                    ResultList = SplitAlt.ElementAt(i).ToList();
+                    average = ResultList.Average();
+                    AverageString = average.ToString("0.##");
+                    dr["Average Altitude (M)"] = AverageString;
+                }
+                if (PowerCheck)
+                {
+                    ResultList = SplitPower.ElementAt(i).ToList();
+                    average = ResultList.Average();
+                    AverageString = average.ToString("0.##");
+                    dr["Average Power (Watts)"] = AverageString;
+                }
+
+                dt.Rows.Add(dr);
+            }
+            SummarySections.DataSource = dt;
+        }
+
         private void SummaryData() // summary data calculations to display in gui
         {
             MaxHR.Text = HeartRate.Max().ToString() + " bpm";
@@ -778,7 +862,6 @@ namespace SE_B_Assignment1
 
             //int right = 100 - left;
             //BPM.Text = left.ToString() + "/" + right.ToString();
-
             if (!UnitCheck)
             {
                 type = " KM/H"; type2 = " KM";
@@ -812,8 +895,9 @@ namespace SE_B_Assignment1
                 MaxAlt.Text = Altitude.Max().ToString() + " M";
                 AvgAlt.Text = Altitude.Average().ToString("N0") + " M";
             }
-
+            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
         }
+
         double NormalPowerCalc;
         public void CalculateNormalizedPower()
         {
@@ -852,7 +936,7 @@ namespace SE_B_Assignment1
                 }
                 catch
                 {
-                    MessageBox.Show("30 Points required for Normalized Power Calc");
+                    MessageBox.Show("30 Points required for Normalized Power Calculation");
                 }
             }
         }
@@ -1124,6 +1208,11 @@ namespace SE_B_Assignment1
             IntervalView IntervalView = new IntervalView();
             IntervalView.PointsArray = SplitPoints;
             IntervalView.ShowDialog();
+        }
+
+        private void SummarySec1_ValueChanged(object sender, EventArgs e)
+        {
+            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
         }
 
         private void FTPMaxCalc() //Average % calc of user input against max power (watts)
@@ -1444,7 +1533,7 @@ namespace SE_B_Assignment1
                 dt.Columns.Add("Power Balancing (Left/Right)");
                 dt.Columns.Add("Power Pedaling Index");
             }
-            for (int i = 0; i < heartrate3.Count; i++) 
+            for (int i = 0; i < heartrate.Count; i++) 
             {
                     DataRow dr = dt.NewRow();
                     string balance = null;
@@ -1601,6 +1690,29 @@ namespace SE_B_Assignment1
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+    }
+
+    public static class Extensions
+    {
+        public static IEnumerable<List<T>> Split<T>(this IEnumerable<T> source, int parts)
+        {
+            var list = new List<T>(source);
+            int defaultSize = (int)((double)list.Count / (double)parts);
+            int offset = list.Count % parts;
+            int position = 0;
+
+            for (int i = 0; i < parts; i++)
+            {
+                int size = defaultSize;
+                if (i < offset)
+                    size++; // Just add one to the size (it's enough).
+
+                yield return list.GetRange(position, size);
+
+                // Set the new position after creating a part list, so that it always start with position zero on the first yield return above.
+                position += size;
+            }
         }
     }
 }
