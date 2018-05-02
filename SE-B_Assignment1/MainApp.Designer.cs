@@ -144,7 +144,6 @@
             this.zedGraphControl1.UseExtendedPrintDialog = true;
             this.zedGraphControl1.ZoomEvent += new ZedGraph.ZedGraphControl.ZoomEventHandler(this.zedGraphControl1_ZoomEvent);
             this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler(this.zedGraphControl1_MouseDownEvent);
-            this.zedGraphControl1.Load += new System.EventHandler(this.zedGraphControl1_Load);
             // 
             // menuStrip1
             // 
@@ -482,7 +481,7 @@
             // 
             this.groupBox1.Controls.Add(this.KMRadio);
             this.groupBox1.Controls.Add(this.MPHRadio);
-            this.groupBox1.Location = new System.Drawing.Point(227, 128);
+            this.groupBox1.Location = new System.Drawing.Point(248, 128);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(91, 58);
             this.groupBox1.TabIndex = 1032;
@@ -927,8 +926,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Cycle Data Program";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.SizeChanged += new System.EventHandler(this.Form1_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);

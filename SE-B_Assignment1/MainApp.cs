@@ -61,21 +61,26 @@ namespace SE_B_Assignment1
             tabPage2.Text = @"Table Data";
             tabPage3.Text = @"Comparsion Data";
             tabPage4.Text = @"Summary Section Data";
+            tabControl1.TabPages.Remove(tabPage1);
             FTPInput.Maximum = 1000;
             HRUserInput.Maximum = 300;
             this.zedGraphControl1.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.zedGraphControl1_PointValueEvent);
         }
+
         #region IntervalDetection
         double potentialIntervalStart;
         double detectedIntervalEnd;
         List<string> detectedIntervals = new List<string>();
         List<string> detectedInterval = new List<string>();
 
+        /// <summary>  
+        /// After a file is loaded/plotted and has power values the intervals are detected
+        /// </summary> 
         public void IntervalDetection()
         {
 
-            int detected = 0;
-            detectedIntervals.Clear();
+            int detected = 0; // checks how many were found
+            detectedIntervals.Clear(); // clears both lists for a new file
             detectedInterval.Clear();
 
             for (int i = 0; i < HeartRate.Length; i++)
@@ -85,15 +90,14 @@ namespace SE_B_Assignment1
 
                 for (int p = i; p < Power.Length; p++)
                 {
-                    // get average of proceeding 14 seconds of powers - time taken for rider to reach maximum power
                     List<double> currentPowers = new List<double>();
                     List<double> futurepowers = new List<double>();
 
-                    for (int x = 0; x < 10; x++)
+                    for (int x = 0; x < 10; x++) // rider must be applying power for next 10 seconds
                     {
                         if (p + (x + 1) < Power.Length)
                         {
-                            if (Power[p + x] == 0) // rider must be applying power for next 10 seconds
+                            if (Power[p + x] == 0) //if power drops to 0 then the loop is broken and restarts
                             {
                                 break;
                             }
@@ -102,7 +106,7 @@ namespace SE_B_Assignment1
                         }
                     }
 
-                    if (currentPowers.Count == 0) // no powers added to the last
+                    if (currentPowers.Count < 9) // not enough powers added to the last
                     {
                         break;
                     }
@@ -110,6 +114,7 @@ namespace SE_B_Assignment1
                     double currentPowersAverage = currentPowers.Average();
                     double futurepowersAverage = futurepowers.Average();
                     //Console.WriteLine(currentPowersAverage.ToString() + "/" + futurepowersAverage.ToString());
+
                     // check for potential interval
                     if (currentPowersAverage < futurepowersAverage)
                     {
@@ -120,7 +125,7 @@ namespace SE_B_Assignment1
                             //Console.WriteLine(potentialIntervalStart);
                         }
                     }
-                    else // possible that cyclist built up speed and reached interval speed to maintain
+                    else // possible that cyclist built up speed
                     {
 
                         int maintain = Power[p];
@@ -140,13 +145,13 @@ namespace SE_B_Assignment1
                             percentage = ((maintain * 30) / 100);
                             maxpower = maintain + percentage;
                             minpower = maintain - percentage;
+                            // gets max/min for every last point
 
                             if (Power[q] > minpower && Power[q] < maxpower)
                             //if (Power[q] > minpower)
                             {
                                 timer = interval * counter;
-                                counter++;
-                                
+                                counter++;                             
                             }
                             else
                             {
@@ -155,16 +160,17 @@ namespace SE_B_Assignment1
                                     intervalDetected = true;
                                     detected = detected + 1;
                                     detectedIntervalEnd = q;
-                                    detectedInterval.Add(potentialIntervalStart.ToString() + ":" + detectedIntervalEnd.ToString());
+                                    detectedInterval.Add(potentialIntervalStart.ToString() + ":" + detectedIntervalEnd.ToString()); //used in intervalview.cs
 
                                     double intervalend = detectedIntervalEnd * interval;
                                     double intervalstart = potentialIntervalStart * interval;
+                                    // time/second values of the intervals
 
                                     TimeSpan starting = new TimeSpan();
                                     starting = start.Add(TimeSpan.FromSeconds(intervalstart));
                                     TimeSpan ending = new TimeSpan();
                                     ending = start.Add(TimeSpan.FromSeconds(intervalend));
-
+                                    // full timer with starting time
                                     
                                     detectedIntervals.Add("Interval " + detected + "     " + starting.ToString("hh\\:mm\\:ss") + " - " + ending.ToString("hh\\:mm\\:ss"));
 
@@ -177,7 +183,7 @@ namespace SE_B_Assignment1
                     if (intervalDetected)
                     {
                         i = (int)detectedIntervalEnd; // loop is set to end of detection
-                        potentialIntervalStart = detectedIntervalEnd; // loop is set to end of detection
+                        potentialIntervalStart = detectedIntervalEnd; // potentialIntervalStart is set to end of detection
                         break;
                     }
                     
@@ -185,48 +191,16 @@ namespace SE_B_Assignment1
             }
             
             detectedIntervals.ForEach(Console.WriteLine);
-            DetectedIntervalBox.DataSource = detectedIntervals;
-            potentialIntervalStart = 0;
+            DetectedIntervalBox.DataSource = detectedIntervals; //viewable list box
+            potentialIntervalStart = 0; // reset for future files
         }
-#endregion    
-
-
-        private string zedGraphControl1_PointValueEvent(ZedGraph.ZedGraphControl sender, ZedGraph.GraphPane pane, ZedGraph.CurveItem curve, int iPt)
-        {
-            //MessageBox.Show(curve.ValueAxis(pane).ToString());
-
-            int pointvalue = 0;
-            int xpoint = (int)curve[iPt].X;
-            //MessageBox.Show(xpoint.ToString());
-            if (xpoint < HeartRate.Length)
-            {
-                if (curve.Label.Text.Contains("Power"))
-                {                 
-                    pointvalue = Power[xpoint];
-                }
-                if (curve.Label.Text.Contains("Heart"))
-                {
-                    pointvalue = HeartRate[xpoint];
-                }
-                if (curve.Label.Text.Contains("Speed"))
-                {
-                    pointvalue = Speed[xpoint];
-                }
-                if (curve.Label.Text.Contains("Altitude"))
-                {
-                    pointvalue = Altitude[xpoint];
-                }
-                if (curve.Label.Text.Contains("Cadence"))
-                {
-                    pointvalue = Cadeance[xpoint];
-                }
-            }
-            string value = pointvalue.ToString();
-            return curve.Label.Text + " - " + value;
-            //return "X = " + curve[iPt].X.ToString() + " Y = " + curve[iPt].Y.ToString() + " Name = " + curve.Label.Text;
-        }
+        #endregion
 
         #region SpeedFormat Plots Speed Curve & Allows Users to switch between US & EU formats for Miles/KM
+
+        /// <summary>  
+        /// Runs whenever the option is selected in the GUI
+        /// </summary> 
         private void SpeedFormat(object sender, EventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -234,6 +208,9 @@ namespace SE_B_Assignment1
             SpeedPlot();
         }
 
+        /// <summary>  
+        ///  plots speeds based on user choice or default file set in file
+        /// </summary> 
         private void SpeedPlot() // plots speeds based on user choice or default file set in file
         {
             if (FileLoaded) // doesn't do anything until a file is loaded in
@@ -363,24 +340,29 @@ namespace SE_B_Assignment1
             }
         }
 
+        /// <summary>  
+        ///  Converts KM -> Miles
+        /// </summary> 
         public static double ConvertMilesToKilometers(double miles)
         {
-            //
             // Multiply by this constant and return the result.
-            //
             return miles * 1.609344;
         }
 
+        /// <summary>  
+        ///  Converts Miles -> KM
+        /// </summary>
         public static double ConvertKilometersToMiles(double kilometers)
         {
-            //
             // Multiply by this constant.
-            //
             return kilometers * 0.621371192;
         }
         #endregion
 
         #region GraphMenuOptions Removes/Adds lines from graph
+        /// <summary>  
+        ///  Different Methods for whenever an option is selected in the menu (Removing or Adding hte Line Curve)
+        /// </summary> 
         private void HeartRateMenuItem_Click(object sender, EventArgs e)
         {
             if (FileLoaded) // doesn't do anything until a file is loaded in
@@ -556,6 +538,10 @@ namespace SE_B_Assignment1
         #region Zoom In Summary
         double lastXAxisMax, lastXAxisMin, lastYAxisMax, lastYAxisMin;
         bool zoomIn;
+
+        /// <summary>  
+        ///  Save the zoom values
+        /// </summary> 
         private bool zedGraphControl1_MouseDownEvent(ZedGraphControl sender, MouseEventArgs e)
         {
             // Save the zoom values
@@ -567,6 +553,9 @@ namespace SE_B_Assignment1
             return false;
         }
 
+        /// <summary>  
+        ///  on any zoom event updates the lists with the points viewable (out/in)
+        /// </summary> 
         private void zedGraphControl1_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
             if (((lastYAxisMax - lastYAxisMin) * (lastXAxisMax - lastXAxisMin)) > ((sender.GraphPane.XAxis.Scale.Max - sender.GraphPane.XAxis.Scale.Min) * (sender.GraphPane.YAxis.Scale.Max - sender.GraphPane.YAxis.Scale.Min)))
@@ -637,52 +626,6 @@ namespace SE_B_Assignment1
                     UpdatedPowerList = PowerList.GetRange(StartPoint, Difference);
                     PowerBalance = UpdatedPowerList.ToArray();
                 }
-                /*
-                if (FileComparsion) // FILE TWO (FOR COMPARION ZOOMING)
-                {
-                    if (StartPoint < 0) { StartPoint = System.Math.Abs(StartPoint); }
-                    UpdatedHeartRate = heartrate3.GetRange(StartPoint, Difference);
-                    heartrate3 = UpdatedHeartRate.ToList();
-
-                    if (SpeedCheck)
-                    {
-                        //Speed
-                        List<int> UpdatedSpeedList;
-                        UpdatedSpeedList = HRSpeed3.GetRange(StartPoint, Difference);
-                        HRSpeed3 = UpdatedSpeedList.ToList();
-                    }
-
-                    if (AltCheck)
-                    {
-
-                        //Altitude
-                        List<int> UpdatedAltitudeList;
-                        UpdatedAltitudeList = altitude3.GetRange(StartPoint, Difference);
-                        altitude3 = UpdatedAltitudeList.ToList();
-                    }
-                    if (CadenceCheck)
-                    {
-                        //Cadence
-                        List<int> UpdatedCadenceList;
-                        UpdatedCadenceList = cadence3.GetRange(StartPoint, Difference);
-                        cadence3 = UpdatedCadenceList.ToList();
-                    }
-                    if (PowerCheck)
-                    {
-                        //Power
-                        List<int> UpdatedPowerList;
-                        UpdatedPowerList = power3.GetRange(StartPoint, Difference);
-                        power3 = UpdatedPowerList.ToList();
-                    }
-                    if (PowerBICheck)
-                    {
-                        //Power
-                        List<int> UpdatedPowerList;
-                        UpdatedPowerList = powerbalance3.GetRange(StartPoint, Difference);
-                        powerbalance3 = UpdatedPowerList.ToList();
-                    }
-                }
-                */
                 SummaryData();
 
             }
@@ -690,12 +633,56 @@ namespace SE_B_Assignment1
         }
         #endregion
 
+        #region Plotting to ZedGraph/Summary Data
+        /// <summary>  
+        ///  //lets the x axis change to interval timespan rather than leaving it in seconds format
+        /// </summary> 
         static string Axis_ScaleFormatEvent(GraphPane pane, Axis axis, double val, int index) //lets the x axis change to interval timespan rather than leaving it in seconds format
         {
             double time = val * interval;
             TimeSpan timeVal = start.Add(TimeSpan.FromSeconds(time)); return timeVal.ToString("hh\\:mm\\:ss");
         }
 
+        /// <summary>  
+        ///  Allows hovering over each point to display a tooltip e.g. Power(Comparison) - 1000 (+100)
+        /// </summary> 
+        private string zedGraphControl1_PointValueEvent(ZedGraph.ZedGraphControl sender, ZedGraph.GraphPane pane, ZedGraph.CurveItem curve, int iPt)
+        {
+            //MessageBox.Show(curve.ValueAxis(pane).ToString());
+
+            int pointvalue = 0;
+            int xpoint = (int)curve[iPt].X;
+            //MessageBox.Show(xpoint.ToString());
+            if (xpoint < HeartRate.Length)
+            {
+                if (curve.Label.Text.Contains("Power"))
+                {
+                    pointvalue = Power[xpoint];
+                }
+                if (curve.Label.Text.Contains("Heart"))
+                {
+                    pointvalue = HeartRate[xpoint];
+                }
+                if (curve.Label.Text.Contains("Speed"))
+                {
+                    pointvalue = Speed[xpoint];
+                }
+                if (curve.Label.Text.Contains("Altitude"))
+                {
+                    pointvalue = Altitude[xpoint];
+                }
+                if (curve.Label.Text.Contains("Cadence"))
+                {
+                    pointvalue = Cadeance[xpoint];
+                }
+            }
+            string value = pointvalue.ToString();
+            return curve.Label.Text + " - " + value;
+        }
+
+        /// <summary>  
+        ///  Plots the lists into a zedgraph 
+        /// </summary> 
         private void PlotGraph()
         {
             GraphPane myPane = zedGraphControl1.GraphPane;
@@ -708,22 +695,15 @@ namespace SE_B_Assignment1
             myPane.XAxis.Title.Text = "Seconds";
             myPane.YAxis.Title.Text = "Value";
             myPane.XAxis.Title.Text = "Time";
-            TimeSpan timer = new TimeSpan();
-            timer = timer.Add(TimeSpan.FromSeconds(interval));
             zedGraphControl1.IsShowPointValues = true;
-            //myPane.XAxis.Scale.MinorStep = timer.TotalSeconds;
-            //myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
-            // myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
-            // interval = interval * 5
-            myPane.XAxis.Scale.Max = heartrate.Count;
-            //myPane.XAxis.Scale.MaxAuto = true;
+            myPane.XAxis.Scale.Max = heartrate.Count; // graph scales to points in list
             PointPairList HRSpeed1 = new PointPairList();
             PointPairList HeartRate1 = new PointPairList();
             PointPairList Cadeance1 = new PointPairList();
             PointPairList Altitude1 = new PointPairList();
             PointPairList Power1 = new PointPairList();
-            /*
-*/
+
+            // parses lists to int arrays for plotting
             HeartRate = heartrate.Select(int.Parse).ToArray();
             if (SpeedCheck)
             {
@@ -827,22 +807,18 @@ namespace SE_B_Assignment1
 
             zedGraphControl1.AxisChange();
             zedGraphControl1.Refresh();
-            //zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane); //unzooms graph whenever it is reloaded
         }
 
+        /// <summary>  
+        ///  summary data calculations to display in gui based on bools set in file loading
+        /// </summary> 
         private void SummaryData() // summary data calculations to display in gui
         {
             if (HeartRate.Length == 0) { return; }
             MaxHR.Text = HeartRate.Max().ToString() + " bpm";
             MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString() + " bpm";
             BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0") + " bpm";
-            //BPM.Text = PowerBalance.Where(f => f > 0).Average().ToString("N0") + " bpm";
-            //int PowerB = (int)PowerBalance.Where(f => f > 0).Average(); //16 bit digit
 
-            //byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
-
-            //int right = 100 - left;
-            //BPM.Text = left.ToString() + "/" + right.ToString();
             if (!UnitCheck)
             {
                 type = " KM/H"; type2 = " KM";
@@ -858,8 +834,10 @@ namespace SE_B_Assignment1
                 MaxSpeed.Text = MaxSpd.ToString("N0") + type;
                 double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
                 AvgSpeed.Text = AverageSpeed.ToString("N0") + type;
-                double distance = AverageSpeed * end.TotalHours;
-                Distance.Text = distance.ToString("N") + type2;
+                double time = interval * Speed.Length;
+                TimeSpan hours = TimeSpan.FromSeconds(time);
+                double distance = AverageSpeed * hours.TotalHours;
+                Distance.Text = distance.ToString("0.##") + type2;
             }
             if (PowerCheck)
             {
@@ -879,160 +857,19 @@ namespace SE_B_Assignment1
             if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
         }
 
-        double NormalPowerCalc;
-        public void CalculateNormalizedPower()
-        {
-            var powers = new List<double>();
-
-            for (var x = 0; x < Power.Length; x++)
-            {
-                if (((x + 1) * interval) >= 30) // start rolling average at 30 seconds
-                {
-                    powers.Add(Power[x]);
-                }
-            }
-
-            if (powers.Any() || powers.Count > 30) // 30 required to calculate moving average
-            {
-
-                try
-                {
-                    // calculate a rolling 30 second average of the preceding time points after 30 seconds
-                    int timeset = 30 / interval;
-                    List<double> movingAverages = Enumerable
-                    .Range(0, powers.Count - timeset)
-                    .Select(n => powers.Skip(n).Take(timeset).Average())
-                    .ToList();
-
-                    // raise all the moving averages to the fourth power
-                    List<double> averagesToFourthPower = PowerUp(movingAverages, 4);
-
-                    // find the average of values raised to fourth power
-                    double PowerAverage = averagesToFourthPower.Average();
-
-                    // take the fourth root of the average values raised to the fourth power
-                    NormalPowerCalc = Math.Round(Math.Pow(PowerAverage, 1.0 / 4), 2, MidpointRounding.AwayFromZero);
-
-                    NormalPower.Text = NormalPowerCalc.ToString("N0") + " Watts";
-                }
-                catch
-                {
-                    MessageBox.Show("30 Points required for Normalized Power Calculation");
-                }
-            }
-        }
-
-        public List<double> PowerUp(List<double> AverageList, int p)
-        {
-            for (var x = 0; x < AverageList.Count; x++)
-            {
-                AverageList[x] = Math.Pow(AverageList[x], p);
-            }
-
-            return AverageList;
-        }
-
-
-        private void compareFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Show the dialog and get result.
-            OpenFileDialog ofd = new OpenFileDialog
-            {
-                Title = "Open HRM File",
-                Filter = "hrm|*.hrm"
-            };
-
-
-            HRSpeed2 = HRSpeed.ToList();
-            heartrate2 = heartrate.ToList();
-            cadence2 = cadence.ToList();
-            altitude2 = altitude.ToList();
-            power2 = power.ToList();
-            powerbalance2 = powerbalance.ToList();
-
-            //ofd.InitialDirectory = @"D:\Desktop\Work\Uni Last Year\Sem2\SE-B";
-            DialogResult result = ofd.ShowDialog();
-            if (result == DialogResult.OK) // Test result.
-            {
-                // clears everything everytime a file is loaded
-                ResetGraphObjs();
-
-                try
-                {
-                    List<string> HRData = File.ReadLines(ofd.FileName)
-                                               .SkipWhile(line => line != "[HRData]")
-                                               .Skip(1) //skips [HRDATA] line
-                                               .TakeWhile(line => line != "") //until blank space/next section
-                                               .ToList();
-
-                    List<string> Params = File.ReadLines(ofd.FileName)
-                           .SkipWhile(line => line != "[Params]")
-                           .Skip(1) //skips [Params] line
-                           .TakeWhile(line => line != "[") //until blank space/next section
-                           .ToList();
-
-                    //listBox1.DataSource = Params;
-                    //listBox2.DataSource = HRData;
-
-                    //FileDataManip(HRData, Params);
-                    HRFS.FileDataManip(HRData, Params);
-                    //FileDataLabels(Params);
-                    //FileNameLabel.Text = FileNameLabel.Text + " " + System.IO.Path.GetFileName(ofd.FileName);
-
-                   // FileLoaded = true;
-                    FileComparsion = true;
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    //error message on incorrect file types
-                    return;
-                }
-
-                SetFileVars(); //set varSort Class
-                PlotGraphCompare();
-                /* List<string> HRSpeed3, heartrate3, cadence3, altitude3, power3, powerbalance3 = new List<string>();
-
-                HRSpeed3 = HRSpeed;
-                heartrate3 = heartrate;
-                cadence3 = cadence;
-                altitude3 = altitude;
-                power3 = power;
-                powerbalance3 = powerbalance; */
-
-                HRSpeed3 = Speed.ToList();
-                heartrate3 = HeartRate.ToList();
-                cadence3 = Cadeance.ToList();
-                altitude3 = Altitude.ToList();
-                power3 = Power.ToList();
-                powerbalance3 = PowerBalance.ToList();
-
-                HRSpeed = HRSpeed2.ToList();
-                heartrate = heartrate2.ToList();
-                cadence = cadence2.ToList();
-                altitude = altitude2.ToList();
-                power = power2.ToList();
-                powerbalance = powerbalance2.ToList();
-
-                DataGridViewPlotCompare();
-            }
-        }
-
+        /// <summary>  
+        ///  Plots comparions data into the graph
+        /// </summary> 
         private void PlotGraphCompare()
         {
 
-            //myPane.XAxis.Scale.MinorStep = timer.TotalSeconds;
-            //myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
-            // myPane.XAxis.Scale.MajorStep = timer.TotalSeconds * 5;
-            // interval = interval * 5
-            //myPane.XAxis.Scale.MaxAuto = true;
+
             PointPairList HRSpeed1 = new PointPairList();
             PointPairList HeartRate1 = new PointPairList();
             PointPairList Cadeance1 = new PointPairList();
             PointPairList Altitude1 = new PointPairList();
             PointPairList Power1 = new PointPairList();
-            /*
-*/
+
             HeartRate = heartrate.Select(int.Parse).ToArray();
             if (SpeedCheck)
             {
@@ -1088,7 +925,6 @@ namespace SE_B_Assignment1
 
             }
 
-
             if (SpeedMenuItem.Checked && !MPHRadio.Checked && !KMRadio.Checked) //selects EU or US option first load
             {
                 if (!UnitCheck)
@@ -1136,9 +972,205 @@ namespace SE_B_Assignment1
 
             zedGraphControl1.AxisChange();
             zedGraphControl1.Refresh();
-            //zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane); //unzooms graph whenever it is reloaded
+        }
+#endregion
+
+        #region Normalized Power Calculation
+        double NormalPowerCalc;
+
+        /// <summary>  
+        /// uses moving averages to calculate the normalized power. Raises each point in the lsit to the 4th power before averaging.
+        /// </summary> 
+        public void CalculateNormalizedPower()
+        {
+            var powers = new List<double>();
+
+            for (var x = 0; x < Power.Length; x++)
+            {
+                if (((x + 1) * interval) >= 30) // start rolling average at 30 seconds
+                {
+                    powers.Add(Power[x]);
+                }
+            }
+
+            if (powers.Any() || powers.Count > 30) // 30 required to calculate moving average
+            {
+
+                try
+                {
+                    // calculate a rolling 30 second average of the preceding time points after 30 seconds
+                    int timeset = 30 / interval;
+                    List<double> movingAverages = Enumerable
+                    .Range(0, powers.Count - timeset)
+                    .Select(n => powers.Skip(n).Take(timeset).Average())
+                    .ToList();
+
+                    // raise all the moving averages to the fourth power
+                    List<double> averagesToFourthPower = PowerUp(movingAverages, 4);
+
+                    // find the average of values raised to fourth power
+                    double PowerAverage = averagesToFourthPower.Average();
+
+                    // take the fourth root of the average values raised to the fourth power
+                    NormalPowerCalc = Math.Round(Math.Pow(PowerAverage, 1.0 / 4), 2, MidpointRounding.AwayFromZero);
+
+                    NormalPower.Text = NormalPowerCalc.ToString("N0") + " Watts";
+                }
+                catch
+                {
+                    MessageBox.Show("More points are required for the Normalized Power Calculation");
+                    NormalPower.Text = "More points are required";
+                }
+            }
         }
 
+        /// <summary>  
+        ///  Takes each value in the list and powers it up to x value in the calculation
+        /// </summary> 
+        public List<double> PowerUp(List<double> AverageList, int p)
+        {
+            for (var x = 0; x < AverageList.Count; x++)
+            {
+                AverageList[x] = Math.Pow(AverageList[x], p);
+            }
+
+            return AverageList;
+        }
+#endregion
+    
+        #region UI elemennts
+        /// <summary>  
+        /// gets FTP Value for Intensity Factor and TSS & Plots summary sections if the value is not 0
+        /// </summary>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FTPMaxCalc();
+            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
+        }
+
+        /// <summary>
+        /// Used for opening another form to display interval values
+        /// </summary>
+        /// <remarks>
+        /// the class opened just displays the only the intervals on a graph/summary data
+        /// </remarks>
+        private void ViewIntervalDetails_Click(object sender, EventArgs e)
+        {
+            string text = DetectedIntervalBox.GetItemText(DetectedIntervalBox.SelectedItem);
+            int row = DetectedIntervalBox.SelectedIndex;
+            string pointvals = detectedInterval[row];
+            string[] SplitPoints = pointvals.Split(':');
+            //MessageBox.Show(rowNumber.ToString());
+
+            IntervalView IntervalView = new IntervalView();
+            IntervalView.PointsArray = SplitPoints;
+            IntervalView.ShowDialog();
+        }
+
+        /// <summary>  
+        /// Plots summary sections if the value is not 0 and on any changes
+        /// </summary>
+        private void SummarySec1_ValueChanged(object sender, EventArgs e)
+        {
+            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
+        }
+
+        /// <summary>  
+        /// gets FTP Value for Intensity Factor and TSS
+        /// </summary>
+        private void FTPMaxCalc() //Average % calc of user input against max power (watts)
+        {
+            double FTPValue = (double)FTPInput.Value;
+
+            if (PowerCheck)
+            {
+                int percentage = (int)Math.Round((double)(100 * Power.Max()) / FTPValue);
+                FTPLabel.Text = "(%) of Max Power: " + percentage.ToString() + "%";
+
+                if (FTPValue == 0)
+                {
+                    IFLabel.Text = "Enter an FTP Value";
+                    TSSLabel.Text = "Enter an FTP Value";
+                }
+                else
+                {
+                    AdvancedMetricsCalc(FTPValue);
+                }                               
+            }
+        }
+
+        /// <summary>  
+        /// Calculates Intensity Factor and TSS based on normalised power and FTP Value
+        /// </summary>
+        public void AdvancedMetricsCalc(double FTPValue)
+        {
+
+            double IF = Math.Round(NormalPowerCalc / FTPValue, 2, MidpointRounding.AwayFromZero);
+            IFLabel.Text = IF.ToString();
+
+            int secondstime = Power.Length * interval;
+            double TSS = Math.Round(((secondstime * NormalPowerCalc * IF) / (FTPValue * 3600)) * 100, MidpointRounding.AwayFromZero);
+            TSSLabel.Text = TSS.ToString();
+        }
+
+        /// <summary>  
+        /// IF enter is pressed FTPCalc is called
+        /// </summary>
+        private void FTPInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button1_Click(this, new EventArgs());
+            }
+        }
+
+        /// <summary>  
+        /// On value changed for Heart Rate User Input
+        /// </summary>
+        private void BPMCalc_Click(object sender, EventArgs e)
+        {
+            HeartCalcMax();
+        }
+
+        /// <summary>  
+        /// User input for entered heart rate compares against max heart rate
+        /// </summary>
+        private void HeartCalcMax() //Average % calc of user input against max heart rate
+        {
+            double intValue = 0;
+            if (!Double.TryParse(HRUserInput.Text, out intValue))
+            {
+                MessageBox.Show("Not a number");
+            }
+            else
+            {
+                //intValue = intValue * 0.93;
+                if (FileLoaded)
+                {
+                    int percentage = (int)Math.Round((double)(100 * HeartRate.Max()) / intValue);
+                    HRCalcLabel.Text = "(%) of Max HR: " + percentage.ToString() + "%";
+                }
+
+            }
+        }
+
+        /// <summary>  
+        /// IF enter is pressed BPMCalc is called
+        /// </summary>
+        private void HRUserInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                BPMCalc_Click(this, new EventArgs());
+            }
+        }
+
+        #endregion
+
+        #region File Loading/Information
+        /// <summary>  
+        ///  Sets variables for inital loading of file
+        /// </summary> 
         private void SetFileVars() //sets all vars from HRFileSort Class
         {
             heartrate = HRFileSort.heartrate;
@@ -1167,143 +1199,9 @@ namespace SE_B_Assignment1
             //unchecks graph options based on smode values
 
         }
-
-        private void zedGraphControl1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        #region UI elemennts
-        private void button1_Click(object sender, EventArgs e)
-        {
-            FTPMaxCalc();
-            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
-        }
-
-        private void ViewIntervalDetails_Click(object sender, EventArgs e)
-        {
-            string text = DetectedIntervalBox.GetItemText(DetectedIntervalBox.SelectedItem);
-            int row = DetectedIntervalBox.SelectedIndex;
-            string pointvals = detectedInterval[row];
-            string[] SplitPoints = pointvals.Split(':');
-            //MessageBox.Show(rowNumber.ToString());
-
-            IntervalView IntervalView = new IntervalView();
-            IntervalView.PointsArray = SplitPoints;
-            IntervalView.ShowDialog();
-        }
-
-        private void SummarySec1_ValueChanged(object sender, EventArgs e)
-        {
-            if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
-        }
-
-        private void FTPMaxCalc() //Average % calc of user input against max power (watts)
-        {
-            double FTPValue = (double)FTPInput.Value;
-
-            if (PowerCheck)
-            {
-                int percentage = (int)Math.Round((double)(100 * Power.Max()) / FTPValue);
-                FTPLabel.Text = "(%) of Max Power: " + percentage.ToString() + "%";
-
-                if (FTPValue == 0)
-                {
-                    IFLabel.Text = "Enter an FTP Value";
-                    TSSLabel.Text = "Enter an FTP Value";
-                }
-                else
-                {
-                    //MessageBox.Show(intValue.ToString());
-                    AdvancedMetricsCalc(FTPValue);
-                }                               
-            }
-        }
-        
-        public void AdvancedMetricsCalc(double FTPValue)
-        {
-
-            double IF = Math.Round(NormalPowerCalc / FTPValue, 2, MidpointRounding.AwayFromZero);
-            IFLabel.Text = IF.ToString();
-
-            int secondstime = Power.Length * interval;
-            double TSS = Math.Round(((secondstime * NormalPowerCalc * IF) / (FTPValue * 3600)) * 100, MidpointRounding.AwayFromZero);
-            TSSLabel.Text = TSS.ToString();
-        }
-
-        private void FTPInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                button1_Click(this, new EventArgs());
-            }
-        }
-
-        private void BPMCalc_Click(object sender, EventArgs e)
-        {
-            HeartCalcMax();
-        }
-
-        private void HeartCalcMax() //Average % calc of user input against max heart rate
-        {
-            double intValue = 0;
-            if (!Double.TryParse(HRUserInput.Text, out intValue))
-            {
-                MessageBox.Show("Not a number");
-            }
-            else
-            {
-                //intValue = intValue * 0.93;
-                if (FileLoaded)
-                {
-                    int percentage = (int)Math.Round((double)(100 * HeartRate.Max()) / intValue);
-                    HRCalcLabel.Text = "(%) of Max HR: " + percentage.ToString() + "%";
-                }
-
-            }
-        }
-
-        private void HRUserInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                BPMCalc_Click(this, new EventArgs());
-            }
-        }
-
-#endregion
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-
-        }
-
-        public void SModeFalse()
-        {
-            SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = AirPressureCheck = OptionChanged = false;//reset everything for a new file
-
-        }
-
-        private void ResetGraphObjs() //reset everything for a new file
-        {
-            heartrate.Clear();
-            HRSpeed.Clear();
-            cadence.Clear();
-            altitude.Clear();
-            power.Clear();
-            powerbalance.Clear();
-            SModeFalse();
-
-            if (MPHRadio.Checked)
-            {
-                MPHRadio.Checked = false;
-            }
-            else if (KMRadio.Checked)
-            {
-                KMRadio.Checked = false;
-            }
-        }
-
+        /// <summary>  
+        ///  Loads file and passes it to the HRFS Class/File for sorting before plotting
+        /// </summary> 
         private void LoadFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the dialog and get result.
@@ -1362,11 +1260,12 @@ namespace SE_B_Assignment1
                     IntervalDetection();
                 }
             }
-           
+
         }
 
-
-        // method to extract data such as date of race and display in labels.
+        /// <summary>  
+        /// method to extract data such as date of race and display in labels
+        /// </summary>
         private void FileDataLabels(List<string> Params)
         {
             string IntervalFile = Params.Where(x => x.Contains("Interval")).FirstOrDefault();
@@ -1398,7 +1297,124 @@ namespace SE_B_Assignment1
 
             start = StartTimeSpan; //assign start to use in PlotGraph/DataGridViewPlot
         }
+
+        /// <summary>  
+        /// Reset bools called everytime a file is loaded
+        /// </summary>
+        public void SModeFalse()
+        {
+            SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = AirPressureCheck = OptionChanged = false;//reset everything for a new file
+        }
+
+        /// <summary>  
+        /// Clears lists
+        /// </summary>
+        private void ResetGraphObjs() //reset everything for a new file
+        {
+            heartrate.Clear();
+            HRSpeed.Clear();
+            cadence.Clear();
+            altitude.Clear();
+            power.Clear();
+            powerbalance.Clear();
+            SModeFalse();
+
+            if (MPHRadio.Checked)
+            {
+                MPHRadio.Checked = false;
+            }
+            else if (KMRadio.Checked)
+            {
+                KMRadio.Checked = false;
+            }
+        }
+
+        /// <summary>  
+        ///  Loads file and passes it to the HRFS Class/File for sorting before plotting
+        /// </summary> 
+        private void compareFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Show the dialog and get result.
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Title = "Open HRM File",
+                Filter = "hrm|*.hrm"
+            };
+
+
+            HRSpeed2 = HRSpeed.ToList(); // stores original variables to temporary list
+            heartrate2 = heartrate.ToList();
+            cadence2 = cadence.ToList();
+            altitude2 = altitude.ToList();
+            power2 = power.ToList();
+            powerbalance2 = powerbalance.ToList();
+
+            //ofd.InitialDirectory = @"D:\Desktop\Work\Uni Last Year\Sem2\SE-B";
+            DialogResult result = ofd.ShowDialog();
+            if (result == DialogResult.OK) // Test result.
+            {
+                // clears everything everytime a file is loaded
+                ResetGraphObjs();
+
+                try
+                {
+                    List<string> HRData = File.ReadLines(ofd.FileName)
+                                               .SkipWhile(line => line != "[HRData]")
+                                               .Skip(1) //skips [HRDATA] line
+                                               .TakeWhile(line => line != "") //until blank space/next section
+                                               .ToList();
+
+                    List<string> Params = File.ReadLines(ofd.FileName)
+                           .SkipWhile(line => line != "[Params]")
+                           .Skip(1) //skips [Params] line
+                           .TakeWhile(line => line != "[") //until blank space/next section
+                           .ToList();
+
+                    HRFS.FileDataManip(HRData, Params);
+                    FileComparsion = true;
+
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //error message on incorrect file types
+                    return;
+                }
+
+                SetFileVars(); //set varSort Class
+                PlotGraphCompare();
+
+                HRSpeed3 = Speed.ToList(); // stores the variables after they have been plotted to the graph into a different list for the datagrids
+                heartrate3 = HeartRate.ToList();
+                cadence3 = Cadeance.ToList();
+                altitude3 = Altitude.ToList();
+                power3 = Power.ToList();
+                powerbalance3 = PowerBalance.ToList();
+
+                HRSpeed = HRSpeed2.ToList();
+                heartrate = heartrate2.ToList();
+                cadence = cadence2.ToList();
+                altitude = altitude2.ToList();
+                power = power2.ToList();
+                powerbalance = powerbalance2.ToList();
+
+                DataGridViewPlotCompare();
+                DataGridSummarySectionsPlot();
+
+                HRSpeed2.Clear();
+                heartrate2.Clear();
+                cadence2.Clear();
+                altitude2.Clear();
+                power2.Clear();
+                powerbalance2.Clear();
+            }
+        }
+#endregion
+
         #region DataGrid Plotting Methods
+        /// <summary>  
+        ///  Plots file data into datagridview with proper calcuations e.g. Power Balance, Speed etc.
+        /// </summary> 
         private void DataGridViewPlot()
         {
 
@@ -1480,7 +1496,7 @@ namespace SE_B_Assignment1
         }
 
         /// <summary>  
-        ///  Plots summary data into gridview based on user input on how many sections
+        ///  Plots summary data into gridview based on user input on how many sections and for a file comparions (if applicable)
         /// </summary> 
         private void DataGridSummarySectionsPlot()
         {
@@ -1814,6 +1830,9 @@ namespace SE_B_Assignment1
             SummarySections.DataSource = dt;
         }
 
+        /// <summary>  
+        ///  Plots the file data for comparsions for a different with every point/time interval
+        /// </summary> 
         private void DataGridViewPlotCompare()
         {
 
@@ -2002,12 +2021,11 @@ namespace SE_B_Assignment1
 
 #endregion
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+    } // end of partial form 1 class
 
-        }
-    }
-
+    /// <summary>  
+    ///  Extension class for list to split it into smaller versions based on user input
+    /// </summary> 
     public static class Extensions
     {
         public static IEnumerable<List<T>> Split<T>(this IEnumerable<T> source, int parts)

@@ -36,7 +36,7 @@ namespace SE_B_Assignment1
         List<string> power3 = new List<string>();
         List<string> powerbalance3 = new List<string>();
 
-        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck;
+        bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, AirPressureCheck;
         static TimeSpan start;
         TimeSpan end;
 
@@ -49,6 +49,10 @@ namespace SE_B_Assignment1
         public static int interval;
         public string type, type2, altitudetype;
 
+        /// <summary>  
+        /// Class to display interval points only in graph/summary data from MainApp.cs
+        /// Uses many of the samy classes from MainApp.cs with minor differences.
+        /// </summary> 
         public IntervalView()
         {
             InitializeComponent();
@@ -56,7 +60,9 @@ namespace SE_B_Assignment1
             FTPInput.Maximum = 1000;
             HRUserInput.Maximum = 300;
         }
-
+        /// <summary>  
+        /// Gets detected interval list from MainApp.cs.
+        /// </summary> 
         public string[] PointsArray { get; set; }
 
         private void SetFileVars() //sets all vars from HRFileSort Class
@@ -338,13 +344,6 @@ namespace SE_B_Assignment1
             MaxHR.Text = HeartRate.Max().ToString() + " bpm";
             MinHR.Text = HeartRate.Where(f => f > 0).Min().ToString() + " bpm";
             BPM.Text = HeartRate.Where(f => f > 0).Average().ToString("N0") + " bpm";
-            //BPM.Text = PowerBalance.Where(f => f > 0).Average().ToString("N0") + " bpm";
-            //int PowerB = (int)PowerBalance.Where(f => f > 0).Average(); //16 bit digit
-
-            //byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
-
-            //int right = 100 - left;
-            //BPM.Text = left.ToString() + "/" + right.ToString();
 
             if (!UnitCheck)
             {
@@ -361,8 +360,10 @@ namespace SE_B_Assignment1
                 MaxSpeed.Text = MaxSpd.ToString("N0") + type;
                 double AverageSpeed = Speed.Where(f => f > 0).Average() / 10;
                 AvgSpeed.Text = AverageSpeed.ToString("N0") + type;
-                double distance = AverageSpeed * end.TotalHours;
-                Distance.Text = distance.ToString("N") + type2;
+                double time = interval * Difference;
+                TimeSpan hours = TimeSpan.FromSeconds(time);
+                double distance = AverageSpeed * hours.TotalHours;
+                Distance.Text = distance.ToString("0.##") + type2;
             }
             if (PowerCheck)
             {
@@ -503,12 +504,9 @@ namespace SE_B_Assignment1
             }
             else
             {
-                //intValue = intValue * 0.93;
-                if (FileLoaded)
-                {
-                    int percentage = (int)Math.Round((double)(100 * HeartRate.Max()) / intValue);
-                    HRCalcLabel.Text = "(%) of Max HR: " + percentage.ToString() + "%";
-                }
+
+                int percentage = (int)Math.Round((double)(100 * HeartRate.Max()) / intValue);
+                HRCalcLabel.Text = "(%) of Max HR: " + percentage.ToString() + "%";
 
             }
         }

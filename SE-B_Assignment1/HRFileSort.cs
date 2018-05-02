@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SE_B_Assignment1
-{
+{        
+    /// <summary>  
+    /// Class used to parse file information before passing back to MainApp.cs
+    /// </summary> 
     public class HRFileSort
     {
 
@@ -20,6 +23,9 @@ namespace SE_B_Assignment1
 
         public static int interval;
 
+        /// <summary>  
+        /// Reads all file information in and sets the correct bools/lists etc.
+        /// </summary> 
         public void FileDataManip(List<string> HRData, List<string> Params)
         {
             SModeFalse();
@@ -91,6 +97,9 @@ namespace SE_B_Assignment1
             
         }
 
+        /// <summary>  
+        /// Resets for every new file
+        /// </summary> 
         public void SModeFalse()
         {
             SpeedCheck = CadenceCheck = AltCheck = PowerCheck = PowerBICheck = PowerPedalCheck = HRCheck = UnitCheck = AirPressureCheck = false;// and so on.
