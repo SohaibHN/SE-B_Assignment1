@@ -15,7 +15,7 @@ namespace SE_B_Assignment1
 {
     public partial class Form1 : Form
     {
-        List<string> heartrate = new List<string>();
+        public List<string> heartrate = new List<string>();
         List<string> HRSpeed = new List<string>();
         List<string> cadence = new List<string>();
         List<string> altitude = new List<string>();
@@ -23,19 +23,6 @@ namespace SE_B_Assignment1
         List<string> powerbalance = new List<string>();
         //List<string> HRSpeed, heartrate, cadence, altitude, power, powerbalance = new List<string>();
         //List<string> HRSpeed2, heartrate2, cadence2, altitude2, power2, powerbalance2 = new List<string>();
-        List<string> heartrate2 = new List<string>();
-        List<string> HRSpeed2 = new List<string>();
-        List<string> cadence2 = new List<string>();
-        List<string> altitude2 = new List<string>();
-        List<string> power2 = new List<string>();
-        List<string> powerbalance2 = new List<string>();
-
-        List<int> heartrate3 = new List<int>();
-        List<int> HRSpeed3 = new List<int>();
-        List<int> cadence3 = new List<int>();
-        List<int> altitude3 = new List<int>();
-        List<int> power3 = new List<int>();
-        List<int> powerbalance3 = new List<int>();
 
         bool SpeedCheck, CadenceCheck, AltCheck, PowerCheck, PowerBICheck, PowerPedalCheck, HRCheck, UnitCheck, FileLoaded, AirPressureCheck, FileComparsion;
         bool OptionChanged = false;
@@ -343,7 +330,7 @@ namespace SE_B_Assignment1
         /// <summary>  
         ///  Converts KM -> Miles
         /// </summary> 
-        public static double ConvertMilesToKilometers(double miles)
+        public double ConvertMilesToKilometers(double miles)
         {
             // Multiply by this constant and return the result.
             return miles * 1.609344;
@@ -352,7 +339,7 @@ namespace SE_B_Assignment1
         /// <summary>  
         ///  Converts Miles -> KM
         /// </summary>
-        public static double ConvertKilometersToMiles(double kilometers)
+        public double ConvertKilometersToMiles(double kilometers)
         {
             // Multiply by this constant.
             return kilometers * 0.621371192;
@@ -677,13 +664,17 @@ namespace SE_B_Assignment1
                 }
             }
             string value = pointvalue.ToString();
-            return curve.Label.Text + " - " + value;
+            int timeinseconds = xpoint * interval;
+            TimeSpan time = TimeSpan.FromSeconds(timeinseconds);
+            //time.TotalSeconds(timeinseconds)
+            if (FileComparsion) { }
+            return curve.Label.Text + ": " + value + "\n" + "Time: " + time;
         }
 
         /// <summary>  
         ///  Plots the lists into a zedgraph 
         /// </summary> 
-        private void PlotGraph()
+        public int PlotGraph()
         {
             GraphPane myPane = zedGraphControl1.GraphPane;
             myPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler(Axis_ScaleFormatEvent); //lets the x axis change to interval timespan rather than leaving it in seconds format
@@ -759,7 +750,6 @@ namespace SE_B_Assignment1
 
             }
 
-
             if (SpeedMenuItem.Checked && !MPHRadio.Checked && !KMRadio.Checked) //selects EU or US option first load
             {
                 if (!UnitCheck)
@@ -771,8 +761,6 @@ namespace SE_B_Assignment1
                     this.MPHRadio.Checked = true;
                 }
             }
-
-            SummaryData();
 
             //loads curves based if they are selected in the options & checked in smode
 
@@ -807,6 +795,8 @@ namespace SE_B_Assignment1
 
             zedGraphControl1.AxisChange();
             zedGraphControl1.Refresh();
+            SummaryData();
+            return myPane.CurveList.Count();
         }
 
         /// <summary>  
@@ -947,11 +937,6 @@ namespace SE_B_Assignment1
                 HeartRate1, Color.DarkBlue, SymbolType.None);
             }
 
-            if (SpeedMenuItem.Checked && SpeedCheck)
-            {
-                SpeedPlot();
-            }
-
             if (AltitudeMenuItem.Checked && AltCheck)
             {
                 LineItem AltitudeCurve = zedGraphControl1.GraphPane.AddCurve("Altitude (Comparison)",
@@ -969,6 +954,12 @@ namespace SE_B_Assignment1
                   Power1, Color.DarkOrange, SymbolType.None);
             }
 
+            if (SpeedMenuItem.Checked && SpeedCheck)
+            {
+                LineItem AltitudeCurve = zedGraphControl1.GraphPane.AddCurve("Speed (Comparsion)",
+                HRSpeed1, Color.DarkRed, SymbolType.None);
+            }
+
 
             zedGraphControl1.AxisChange();
             zedGraphControl1.Refresh();
@@ -981,7 +972,7 @@ namespace SE_B_Assignment1
         /// <summary>  
         /// uses moving averages to calculate the normalized power. Raises each point in the lsit to the 4th power before averaging.
         /// </summary> 
-        public void CalculateNormalizedPower()
+        public double CalculateNormalizedPower()
         {
             var powers = new List<double>();
 
@@ -1015,13 +1006,16 @@ namespace SE_B_Assignment1
                     NormalPowerCalc = Math.Round(Math.Pow(PowerAverage, 1.0 / 4), 2, MidpointRounding.AwayFromZero);
 
                     NormalPower.Text = NormalPowerCalc.ToString("N0") + " Watts";
+                    return NormalPowerCalc;
                 }
                 catch
                 {
                     MessageBox.Show("More points are required for the Normalized Power Calculation");
                     NormalPower.Text = "More points are required";
+                    return NormalPowerCalc;
                 }
             }
+            return NormalPowerCalc;
         }
 
         /// <summary>  
@@ -1046,6 +1040,7 @@ namespace SE_B_Assignment1
         {
             FTPMaxCalc();
             if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
+
         }
 
         /// <summary>
@@ -1073,6 +1068,7 @@ namespace SE_B_Assignment1
         private void SummarySec1_ValueChanged(object sender, EventArgs e)
         {
             if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
+            if (SummarySec1.Value == 0) { SummarySections.DataSource = null; SummarySections.Refresh(); }
         }
 
         /// <summary>  
@@ -1171,7 +1167,7 @@ namespace SE_B_Assignment1
         /// <summary>  
         ///  Sets variables for inital loading of file
         /// </summary> 
-        private void SetFileVars() //sets all vars from HRFileSort Class
+        public void SetFileVars() //sets all vars from HRFileSort Class
         {
             heartrate = HRFileSort.heartrate;
             HRSpeed = HRFileSort.HRSpeed;
@@ -1180,7 +1176,7 @@ namespace SE_B_Assignment1
             power = HRFileSort.power;
             powerbalance = HRFileSort.powerbalance;
             interval = HRFileSort.interval;
-
+           // if (FileComparsion) { return; }
             SpeedCheck = HRFileSort.SpeedCheck;
             CadenceCheck = HRFileSort.CadenceCheck;
             PowerCheck = HRFileSort.PowerCheck;
@@ -1191,17 +1187,70 @@ namespace SE_B_Assignment1
             AirPressureCheck = HRFileSort.AirPressureCheck;
             AltCheck = HRFileSort.AltCheck;
 
-            if (HRCheck) { SpeedMenuItem.Checked = true; PowerMenuItem.Checked = true; CadenceMenuItem.Checked = true; AltitudeMenuItem.Checked = true; }
+            if (HRCheck) { SpeedMenuItem.Checked = true; PowerMenuItem.Checked = true; CadenceMenuItem.Checked = true; AltitudeMenuItem.Checked = true; } else { HeartRateMenuItem.Checked = false; }
             if (!SpeedCheck) { SpeedMenuItem.Checked = false; }
             if (!PowerCheck) { PowerMenuItem.Checked = false; }
             if (!CadenceCheck) { CadenceMenuItem.Checked = false; }
             if (!AltCheck) { AltitudeMenuItem.Checked = false; }
+
             //unchecks graph options based on smode values
 
         }
         /// <summary>  
         ///  Loads file and passes it to the HRFS Class/File for sorting before plotting
         /// </summary> 
+
+        public bool ParseFile(string filename)
+        {
+            // clears everything everytime a file is loaded
+            //MessageBox.Show(filename);
+            ResetGraphObjs();
+            DetectedIntervalBox.DataSource = null;
+            DetectedIntervalBox.Items.Clear();
+            zoomIn = false;
+            try
+            {
+                List<string> HRData = File.ReadLines(filename)
+                                           .SkipWhile(line => line != "[HRData]")
+                                           .Skip(1) //skips [HRDATA] line
+                                           .TakeWhile(line => line != "[") //until blank space/next section
+                                           .ToList();
+
+                List<string> Params = File.ReadLines(filename)
+                       .SkipWhile(line => line != "[Params]")
+                       .Skip(1) //skips [Params] line
+                       .TakeWhile(line => line != "[Note]") //until blank space/next section
+                       .ToList();
+
+                //listBox1.DataSource = Params;
+                //listBox2.DataSource = HRData;
+                //FileDataManip(HRData, Params);
+                Console.WriteLine(String.Join("\n", Params));
+                HRFS.FileDataManip(HRData, Params);
+                FileDataLabels(Params);
+                FileNameLabel.Text = System.IO.Path.GetFileName(filename);
+
+                FileLoaded = true;
+                FileComparsion = false;
+
+                SetFileVars(); //set varSort Class
+                PlotGraph();
+                DataGridViewPlot();
+                if (PowerCheck)
+                {
+                    IntervalDetection();
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //error message on incorrect file types
+                return false;
+            }
+
+        }
+
         private void LoadFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the dialog and get result.
@@ -1214,51 +1263,7 @@ namespace SE_B_Assignment1
             DialogResult result = ofd.ShowDialog();
             if (result == DialogResult.OK) // Test result.
             {
-                // clears everything everytime a file is loaded
-                ResetGraphObjs();
-                DetectedIntervalBox.DataSource = null;
-                DetectedIntervalBox.Items.Clear();
-                zoomIn = false;
-                try
-                {
-                    List<string> HRData = File.ReadLines(ofd.FileName)
-                                               .SkipWhile(line => line != "[HRData]")
-                                               .Skip(1) //skips [HRDATA] line
-                                               .TakeWhile(line => line != "[") //until blank space/next section
-                                               .ToList();
-
-                    List<string> Params = File.ReadLines(ofd.FileName)
-                           .SkipWhile(line => line != "[Params]")
-                           .Skip(1) //skips [Params] line
-                           .TakeWhile(line => line != "[") //until blank space/next section
-                           .ToList();
-
-                    listBox1.DataSource = Params;
-                    listBox2.DataSource = HRData;
-
-                    //FileDataManip(HRData, Params);
-                    HRFS.FileDataManip(HRData, Params);
-                    FileDataLabels(Params);
-                    FileNameLabel.Text = System.IO.Path.GetFileName(ofd.FileName);
-
-                    FileLoaded = true;
-                    FileComparsion = false;
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("File is incorrect format, please use a correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    //error message on incorrect file types
-                    return;
-                }
-
-
-                SetFileVars(); //set varSort Class
-                PlotGraph(); 
-                DataGridViewPlot();
-                if (PowerCheck)
-                {
-                    IntervalDetection();
-                }
+                ParseFile(ofd.FileName);
             }
 
         }
@@ -1309,7 +1314,7 @@ namespace SE_B_Assignment1
         /// <summary>  
         /// Clears lists
         /// </summary>
-        private void ResetGraphObjs() //reset everything for a new file
+        public void ResetGraphObjs() //reset everything for a new file
         {
             heartrate.Clear();
             HRSpeed.Clear();
@@ -1328,6 +1333,26 @@ namespace SE_B_Assignment1
                 KMRadio.Checked = false;
             }
         }
+
+        List<string> heartrate2 = new List<string>();
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        List<string> HRSpeed2 = new List<string>();
+        List<string> cadence2 = new List<string>();
+        List<string> altitude2 = new List<string>();
+        List<string> power2 = new List<string>();
+        List<string> powerbalance2 = new List<string>();
+
+        List<int> heartrate3 = new List<int>();
+        List<int> HRSpeed3 = new List<int>();
+        List<int> cadence3 = new List<int>();
+        List<int> altitude3 = new List<int>();
+        List<int> power3 = new List<int>();
+        List<int> powerbalance3 = new List<int>();
 
         /// <summary>  
         ///  Loads file and passes it to the HRFS Class/File for sorting before plotting
@@ -1384,22 +1409,52 @@ namespace SE_B_Assignment1
                 SetFileVars(); //set varSort Class
                 PlotGraphCompare();
 
-                HRSpeed3 = Speed.ToList(); // stores the variables after they have been plotted to the graph into a different list for the datagrids
                 heartrate3 = HeartRate.ToList();
-                cadence3 = Cadeance.ToList();
-                altitude3 = Altitude.ToList();
-                power3 = Power.ToList();
-                powerbalance3 = PowerBalance.ToList();
-
-                HRSpeed = HRSpeed2.ToList();
-                heartrate = heartrate2.ToList();
-                cadence = cadence2.ToList();
-                altitude = altitude2.ToList();
-                power = power2.ToList();
-                powerbalance = powerbalance2.ToList();
+                if (SpeedCheck)
+                {
+                    HRSpeed3 = Speed.ToList(); // stores the variables after they have been plotted to the graph into a different list for the datagrids
+                }
+                if (CadenceCheck)
+                {
+                    cadence3 = Cadeance.ToList();
+                }
+                if (AltCheck)
+                {
+                    altitude3 = Altitude.ToList();
+                }
+                if (PowerCheck)
+                {
+                    power3 = Power.ToList();
+                }
+                if (PowerBICheck)
+                {
+                    powerbalance3 = PowerBalance.ToList();
+                }
+   
+                heartrate = heartrate2.ToList();      
+                if (SpeedCheck)
+                {
+                    HRSpeed = HRSpeed2.ToList(); // stores the variables after they have been plotted to the graph into a different list for the datagrids
+                }
+                if (CadenceCheck)
+                {
+                    cadence = cadence2.ToList();
+                }
+                if (AltCheck)
+                {
+                    altitude = altitude2.ToList();
+                }
+                if (PowerCheck)
+                {
+                    power = power2.ToList();
+                }
+                if (PowerBICheck)
+                {
+                    powerbalance = powerbalance2.ToList();
+                }
 
                 DataGridViewPlotCompare();
-                DataGridSummarySectionsPlot();
+                if (SummarySec1.Value > 0) { DataGridSummarySectionsPlot(); }
 
                 HRSpeed2.Clear();
                 heartrate2.Clear();
@@ -1415,83 +1470,86 @@ namespace SE_B_Assignment1
         /// <summary>  
         ///  Plots file data into datagridview with proper calcuations e.g. Power Balance, Speed etc.
         /// </summary> 
-        private void DataGridViewPlot()
+        public int DataGridViewPlot()
         {
-
             DataTable dt = new DataTable();
-            dt.Columns.Add("Interval Time (Seconds)");
-            dt.Columns.Add("Heart Rate (BPM)");
-            //int timer = interval;
-            TimeSpan timer = start; // sets timer to start time
+            if (FileLoaded)
+            {
+                dt.Columns.Add("Interval Time (Seconds)");
+                dt.Columns.Add("Heart Rate (BPM)");
+                //int timer = interval;
+                TimeSpan timer = start; // sets timer to start time
 
-            //adds columns to datagrid based on smode values
-            if (SpeedCheck)
-            {
-                dt.Columns.Add("Speed " + "(" + type2 + ")");
-            }
-            if (CadenceCheck)
-            {
-                dt.Columns.Add("Cadence (RPM)");
-            }
-            if (AltCheck)
-            {
-                dt.Columns.Add("Altitude (M)");
-            }
-            if (PowerCheck)
-            {
-                dt.Columns.Add("Power (Watts)");
-            }
-            if (PowerBICheck)
-            {
-                dt.Columns.Add("Power Balancing (Left/Right)");
-                dt.Columns.Add("Power Pedaling Index");
-            }
-            for (int i = 0; i < HeartRate.Length; i++)
-            {
-                DataRow dr = dt.NewRow();
-                string balance = null;
-                byte index = new byte();
-                dr["Heart Rate (BPM)"] = HeartRate[i];
-                dr["Interval Time (Seconds)"] = timer.ToString("hh\\:mm\\:ss");
-
+                //adds columns to datagrid based on smode values
                 if (SpeedCheck)
                 {
-                    int speed = Speed[i] / 10;
-                    string speedstring = speed.ToString("N0") + type;
-                    dr["Speed " + "(" + type2 + ")"] = speedstring;
+                    dt.Columns.Add("Speed " + "(" + type2 + ")");
                 }
-
-                if (PowerBICheck)
-                {
-                    int PowerB = PowerBalance[i]; //16 bit digit
-
-                    byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
-                    index = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
-
-                    int right = 100 - left;
-                    balance = left.ToString() + "/" + right.ToString();
-                    //interval = interval + i;
-                    dr["Power Balancing (Left/Right)"] = balance;
-                    dr["Power Pedaling Index"] = index;
-                }
-
                 if (CadenceCheck)
                 {
-                    dr["Cadence (RPM)"] = cadence[i];
+                    dt.Columns.Add("Cadence (RPM)");
                 }
                 if (AltCheck)
                 {
-                    dr["Altitude (M)"] = Altitude[i];
+                    dt.Columns.Add("Altitude (M)");
                 }
                 if (PowerCheck)
                 {
-                    dr["Power (Watts)"] = Power[i];
+                    dt.Columns.Add("Power (Watts)");
                 }
-                
-                dt.Rows.Add(dr);
-                timer = timer.Add(TimeSpan.FromSeconds(interval));
+                if (PowerBICheck)
+                {
+                    dt.Columns.Add("Power Balancing (Left/Right)");
+                    dt.Columns.Add("Power Pedaling Index");
+                }
+                for (int i = 0; i < HeartRate.Length; i++)
+                {
+                    DataRow dr = dt.NewRow();
+                    string balance = null;
+                    byte index = new byte();
+                    dr["Heart Rate (BPM)"] = HeartRate[i];
+                    dr["Interval Time (Seconds)"] = timer.ToString("hh\\:mm\\:ss");
+
+                    if (SpeedCheck)
+                    {
+                        int speed = Speed[i] / 10;
+                        string speedstring = speed.ToString("N0") + type;
+                        dr["Speed " + "(" + type2 + ")"] = speedstring;
+                    }
+
+                    if (PowerBICheck)
+                    {
+                        int PowerB = PowerBalance[i]; //16 bit digit
+
+                        byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                        index = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+
+                        int right = 100 - left;
+                        balance = left.ToString() + "/" + right.ToString();
+                        //interval = interval + i;
+                        dr["Power Balancing (Left/Right)"] = balance;
+                        dr["Power Pedaling Index"] = index;
+                    }
+
+                    if (CadenceCheck)
+                    {
+                        dr["Cadence (RPM)"] = cadence[i];
+                    }
+                    if (AltCheck)
+                    {
+                        dr["Altitude (M)"] = Altitude[i];
+                    }
+                    if (PowerCheck)
+                    {
+                        dr["Power (Watts)"] = Power[i];
+                    }
+
+                    dt.Rows.Add(dr);
+                    timer = timer.Add(TimeSpan.FromSeconds(interval));
+                }
             }
             dataGridView1.DataSource = dt;
+            return dataGridView1.RowCount;
             
         }
 
@@ -1865,7 +1923,9 @@ namespace SE_B_Assignment1
                 dt.Columns.Add("Power Balancing (Left/Right)");
                 dt.Columns.Add("Power Pedaling Index");
             }
-            for (int i = 0; i < heartrate.Count; i++) 
+            int count = 0;
+            if (heartrate.Count < heartrate3.Count) { count = heartrate.Count; } else { count = heartrate3.Count; } // find out lowest count between the two lists
+            for (int i = 0; i < count; i++) 
             {
                     DataRow dr = dt.NewRow(); //file one
                     string balance = null;
@@ -2016,7 +2076,7 @@ namespace SE_B_Assignment1
                     timer = timer.Add(TimeSpan.FromSeconds(interval));
                 }
             CompareGridView.DataSource = dt;
-            tabControl1.SelectTab(2);
+            tabControl1.SelectTab(1);
         }
 
 #endregion

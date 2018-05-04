@@ -926,6 +926,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Cycle Data Program";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -986,9 +987,6 @@
         private System.Windows.Forms.RadioButton MPHRadio;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton KMRadio;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem HeartRateMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem SpeedMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CadenceMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AltitudeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PowerMenuItem;
@@ -1031,6 +1029,9 @@
         private System.Windows.Forms.DataGridView SummarySections;
         private System.Windows.Forms.NumericUpDown SummarySec1;
         private System.Windows.Forms.Label label23;
+        internal System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        public System.Windows.Forms.ToolStripMenuItem HeartRateMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem SpeedMenuItem;
     }
 }
 

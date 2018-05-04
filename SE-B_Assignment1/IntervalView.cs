@@ -65,7 +65,7 @@ namespace SE_B_Assignment1
         /// </summary> 
         public string[] PointsArray { get; set; }
 
-        private void SetFileVars() //sets all vars from HRFileSort Class
+        public void SetFileVars() //sets all vars from HRFileSort Class
         {
             heartrate = HRFileSort.heartrate;
             HRSpeed = HRFileSort.HRSpeed;
@@ -94,6 +94,9 @@ namespace SE_B_Assignment1
         #region Zoom In Summary
         double lastXAxisMax, lastXAxisMin, lastYAxisMax, lastYAxisMin;
         bool zoomIn;
+        /// <summary>  
+        ///  Save the zoom values
+        /// </summary> 
         private bool zedGraphControl1_MouseDownEvent(ZedGraphControl sender, MouseEventArgs e)
         {
             // Save the zoom values
@@ -104,9 +107,13 @@ namespace SE_B_Assignment1
             zoomIn = false;
             return false;
         }
+
         int StartPoint;
         int EndPoint;
         int Difference;
+        /// <summary>  
+        ///  on any zoom event finds the davailable points viewable on the graph and passes to other method
+        /// </summary> 
         private void zedGraphControl1_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
             if (((lastYAxisMax - lastYAxisMin) * (lastXAxisMax - lastXAxisMin)) > ((sender.GraphPane.XAxis.Scale.Max - sender.GraphPane.XAxis.Scale.Min) * (sender.GraphPane.YAxis.Scale.Max - sender.GraphPane.YAxis.Scale.Min)))
@@ -123,10 +130,14 @@ namespace SE_B_Assignment1
             EndPoint = (int)sender.GraphPane.XAxis.Scale.Max - 1;
             Difference = EndPoint - StartPoint;
             
-            SummaryZoomCalc();
+            SummaryZoomCalc(StartPoint, EndPoint, Difference);
         }
 
-        public void SummaryZoomCalc()
+        /// <summary>  
+        ///  on any zoom event updates the lists with the points viewable (out/in)
+        ///  Takes 3 Ints used for getting the difference of the viewable points
+        /// </summary> 
+        public void SummaryZoomCalc(int StartPoint, int EndPoint, int Difference)
         {
             int test = Difference + StartPoint;
 
@@ -178,10 +189,12 @@ namespace SE_B_Assignment1
             }
         }
         #endregion
-
+        #region Plotting Graph Methods
+        /// <summary>  
+        ///  Allows hovering over each point to display a tooltip e.g. Power(Comparison) - 1000 (+100)
+        /// </summary> 
         private string zedGraphControl1_PointValueEvent(ZedGraph.ZedGraphControl sender, ZedGraph.GraphPane pane, ZedGraph.CurveItem curve, int iPt)
         {
-            //MessageBox.Show(curve.ValueAxis(pane).ToString());
 
             int pointvalue = 0;
             int xpoint = (int)curve[iPt].X;
@@ -210,8 +223,10 @@ namespace SE_B_Assignment1
                 }
             }
             string value = pointvalue.ToString();
-            return curve.Label.Text + " - " + value;
-            //return "X = " + curve[iPt].X.ToString() + " Y = " + curve[iPt].Y.ToString() + " Name = " + curve.Label.Text;
+            int timeinseconds = xpoint * interval;
+            TimeSpan time = TimeSpan.FromSeconds(timeinseconds);
+            //time.TotalSeconds(timeinseconds)
+            return curve.Label.Text + ": " + value + "\n" + "Time: " + time;
         }
 
         static string Axis_ScaleFormatEvent(GraphPane pane, Axis axis, double val, int index) //lets the x axis change to interval timespan rather than leaving it in seconds format
@@ -220,6 +235,9 @@ namespace SE_B_Assignment1
             TimeSpan timeVal = start.Add(TimeSpan.FromSeconds(time)); return timeVal.ToString("hh\\:mm\\:ss");
         }
 
+        /// <summary>  
+        ///  Plots the lists into a zedgraph 
+        /// </summary> 
         private void PlotGraph()
         {
             GraphPane myPane = zedGraphControl1.GraphPane;
@@ -336,9 +354,15 @@ namespace SE_B_Assignment1
 
             zedGraphControl1.AxisChange();
             zedGraphControl1.Refresh();
+            
             //zedGraphControl1.RestoreScale(zedGraphControl1.GraphPane); //unzooms graph whenever it is reloaded
         }
 
+        #endregion
+
+        /// <summary>  
+        ///  summary data calculations to display in gui based on bools set in file loading
+        /// </summary> 
         private void SummaryData() // summary data calculations to display in gui
         {
             MaxHR.Text = HeartRate.Max().ToString() + " bpm";
@@ -382,8 +406,12 @@ namespace SE_B_Assignment1
             }
 
         }
-
+        #region Advanced Metrics (Normalized Power etc.)
         double NormalPowerCalc;
+
+        /// <summary>  
+        /// uses moving averages to calculate the normalized power. Raises each point in the lsit to the 4th power before averaging.
+        /// </summary> 
         public void CalculateNormalizedPower()
         {
             var powers = new List<double>();
@@ -426,6 +454,9 @@ namespace SE_B_Assignment1
             }
         }
 
+        /// <summary>  
+        ///  Takes each value in the list and powers it up to x value in the calculation
+        /// </summary> 
         public List<double> PowerUp(List<double> AverageList, int p)
         {
             for (var x = 0; x < AverageList.Count; x++)
@@ -436,12 +467,39 @@ namespace SE_B_Assignment1
             return AverageList;
         }
 
+        /// <summary>  
+        /// Calculates Intensity Factor based on normalised power and FTP Value
+        /// </summary>
+        public double AdvancedMetricsIF(double FTPValue, double NormalPower)
+        {
+            double IF = Math.Round(NormalPower / FTPValue, 2, MidpointRounding.AwayFromZero);
+            IFLabel.Text = IF.ToString();
+            return IF;
+        }
+
+        /// <summary>  
+        /// Calculates TSS based on Intensity Factor, normalised power and FTP Value
+        /// </summary>
+        public double AdvancedMetricsTSS(double FTPValue, double NormalPower, double IF, int TimeInSeconds)
+        {
+            double TSS = Math.Round(((TimeInSeconds * NormalPower * IF) / (FTPValue * 3600)) * 100, MidpointRounding.AwayFromZero);
+            TSSLabel.Text = TSS.ToString();
+            return TSS;
+        }
+        #endregion
+
         #region UI elemennts
+        /// <summary>  
+        /// gets FTP Value for Intensity Factor and TSS & Plots summary sections if the value is not 0
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
             FTPMaxCalc();
         }
 
+        /// <summary>  
+        /// gets FTP Value for Intensity Factor and TSS
+        /// </summary>
         private void FTPMaxCalc() //Average % calc of user input against max power (watts)
         {
             double intValue = 0;
@@ -465,23 +523,18 @@ namespace SE_B_Assignment1
                     }
                     else
                     {
-                        AdvancedMetricsCalc(intValue);
+                        double Intensity = AdvancedMetricsIF(intValue, NormalPowerCalc);
+                        int TimeInSeconds = Power.Length * interval;
+                        AdvancedMetricsTSS(intValue, NormalPowerCalc, Intensity, TimeInSeconds);
                     }
                 }
             }
         }
 
-        public void AdvancedMetricsCalc(double FTPValue)
-        {
 
-            double IF = Math.Round(NormalPowerCalc / FTPValue, 2, MidpointRounding.AwayFromZero);
-            IFLabel.Text = IF.ToString();
-
-            int secondstime = Power.Length * interval;
-            double TSS = Math.Round(((secondstime * NormalPowerCalc * IF) / (FTPValue * 3600)) * 100, MidpointRounding.AwayFromZero);
-            TSSLabel.Text = TSS.ToString();
-        }
-
+        /// <summary>  
+        /// IF enter is pressed FTPCalc is called
+        /// </summary>
         private void FTPInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -490,11 +543,17 @@ namespace SE_B_Assignment1
             }
         }
 
+        /// <summary>  
+        /// On value changed for Heart Rate User Input
+        /// </summary>
         private void BPMCalc_Click(object sender, EventArgs e)
         {
             HeartCalcMax();
         }
 
+        /// <summary>  
+        /// User input for entered heart rate compares against max heart rate
+        /// </summary>
         private void HeartCalcMax() //Average % calc of user input against max heart rate
         {
             double intValue = 0;
@@ -511,6 +570,9 @@ namespace SE_B_Assignment1
             }
         }
 
+        /// <summary>  
+        /// IF enter is pressed BPMCalc is called
+        /// </summary>
         private void HRUserInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -525,7 +587,7 @@ namespace SE_B_Assignment1
         {
             SetFileVars();
             PlotGraph();
-            SummaryZoomCalc();
+            SummaryZoomCalc(StartPoint, EndPoint, Difference);
             
         }
     }
