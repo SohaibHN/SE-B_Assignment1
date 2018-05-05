@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Calendar.NET">
+      <HintPath>..\packages\CalendarNETBinaries\Calendar.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -52,6 +55,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalendarView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarView.Designer.cs">
+      <DependentUpon>CalendarView.cs</DependentUpon>
+    </Compile>
     <Compile Include="HRFileSort.cs" />
     <Compile Include="IntervalView.cs">
       <SubType>Form</SubType>
@@ -67,6 +76,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CalendarView.resx">
+      <DependentUpon>CalendarView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IntervalView.resx">
       <DependentUpon>IntervalView.cs</DependentUpon>
     </EmbeddedResource>

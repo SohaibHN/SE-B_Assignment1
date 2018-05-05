@@ -51,7 +51,7 @@ namespace SE_B_Assignment1
             tabControl1.TabPages.Remove(tabPage1);
             FTPInput.Maximum = 1000;
             HRUserInput.Maximum = 300;
-            this.zedGraphControl1.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.zedGraphControl1_PointValueEvent);
+            //this.zedGraphControl1.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.zedGraphControl1_PointValueEvent);
         }
 
         #region IntervalDetection
@@ -639,36 +639,76 @@ namespace SE_B_Assignment1
 
             int pointvalue = 0;
             int xpoint = (int)curve[iPt].X;
+            string value = pointvalue.ToString();
+            int difference = 0;
             //MessageBox.Show(xpoint.ToString());
             if (xpoint < HeartRate.Length)
             {
                 if (curve.Label.Text.Contains("Power"))
                 {
                     pointvalue = Power[xpoint];
+                    if (FileComparsion)
+                    {
+                        int test = power3[xpoint];
+                        difference = pointvalue - test;
+                    }
+                    if (curve.Label.Text.Contains("Comparison"))
+                    {
+                        pointvalue = power3[xpoint];
+                    }
+                    value = pointvalue.ToString() + " Watts";
                 }
                 if (curve.Label.Text.Contains("Heart"))
                 {
                     pointvalue = HeartRate[xpoint];
+                    if (FileComparsion) { difference = HeartRate[xpoint] - heartrate3[xpoint]; }
+                    if (curve.Label.Text.Contains("Comparison"))
+                    {
+                        pointvalue = heartrate3[xpoint];
+                    }
+                    value = pointvalue.ToString() + " BPM";
+
                 }
                 if (curve.Label.Text.Contains("Speed"))
                 {
-                    pointvalue = Speed[xpoint];
+                    pointvalue = Speed[xpoint] / 10;
+                    if (FileComparsion) { difference = (Speed[xpoint] / 10) - (HRSpeed3[xpoint] / 10); }
+                    if (curve.Label.Text.Contains("Comparison"))
+                    {
+                        pointvalue = HRSpeed3[xpoint];
+                    }
+                    value = pointvalue + type;
                 }
                 if (curve.Label.Text.Contains("Altitude"))
                 {
                     pointvalue = Altitude[xpoint];
+                    if (FileComparsion) { difference = Altitude[xpoint] - altitude3[xpoint]; }
+                    if (curve.Label.Text.Contains("Comparison"))
+                    {
+                        pointvalue = altitude3[xpoint];
+                    }
+                    value = pointvalue.ToString() + " Metres";
                 }
                 if (curve.Label.Text.Contains("Cadence"))
                 {
                     pointvalue = Cadeance[xpoint];
+                    if (FileComparsion) { difference = Cadeance[xpoint] - cadence3[xpoint]; }
+                    if (curve.Label.Text.Contains("Comparison"))
+                    {
+                        pointvalue = cadence3[xpoint];
+                    }
+                    value = pointvalue.ToString() + " RPM";
                 }
             }
-            string value = pointvalue.ToString();
+            // string value = pointvalue.ToString();
+            
             int timeinseconds = xpoint * interval;
             TimeSpan time = TimeSpan.FromSeconds(timeinseconds);
             //time.TotalSeconds(timeinseconds)
-            if (FileComparsion) { }
-            return curve.Label.Text + ": " + value + "\n" + "Time: " + time;
+            if (FileComparsion)
+            { return curve.Label.Text + ": " + value + "\n" + "Time: " + time + "\n" + "Difference: " + difference; }
+            else
+            { return curve.Label.Text + ": " + value + "\n" + "Time: " + time; }
         }
 
         /// <summary>  
@@ -843,6 +883,11 @@ namespace SE_B_Assignment1
             {
                 MaxAlt.Text = Altitude.Max().ToString() + " M";
                 AvgAlt.Text = Altitude.Average().ToString("N0") + " M";
+            }
+            if (CadenceCheck)
+            {
+                MaxCadence.Text = Cadeance.Max().ToString() + " M";
+                AvgCadence.Text = Cadeance.Average().ToString("N0") + " M";
             }
             if (SummarySec1.Value != 0 && FileLoaded) { DataGridSummarySectionsPlot(); }
         }
@@ -1341,6 +1386,13 @@ namespace SE_B_Assignment1
 
         }
 
+        private void calendarVIewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CalendarView CalendarView = new CalendarView();
+
+            CalendarView.ShowDialog();
+        }
+
         List<string> HRSpeed2 = new List<string>();
         List<string> cadence2 = new List<string>();
         List<string> altitude2 = new List<string>();
@@ -1592,11 +1644,11 @@ namespace SE_B_Assignment1
             if (PowerCheck)
             {
                 dt.Columns.Add("Average Power (Watts)");
-            if (PowerBICheck)
-            {
-                dt.Columns.Add("Average Power Balancing (Left/Right)");
-                dt.Columns.Add("Average Power Pedaling Index");
-            }
+            //if (PowerBICheck)
+            //{
+            //    dt.Columns.Add("Average Power Balancing (Left/Right)");
+            //    dt.Columns.Add("Average Power Pedaling Index");
+            //}
                 dt.Columns.Add("Normalised Power (Watts)");
                 dt.Columns.Add("Intensitiy Factor");
                 dt.Columns.Add("Training Stress Score");
@@ -1639,20 +1691,20 @@ namespace SE_B_Assignment1
                     AverageString = AverageAlt.ToString("0.##");
                     dr["Average Altitude (M)"] = AverageString;
                 }
-                if (PowerBICheck)
-                {
-                    ResultList = SplitPowerBI.ElementAt(i).ToList();
-                    int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
+                //if (PowerBICheck)
+                //{
+                //    ResultList = SplitPowerBI.ElementAt(i).ToList();
+                //    int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
 
-                    byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
-                    index = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+                //    byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                //    index = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
 
-                    int right = 100 - left;
-                    balance = left.ToString() + "/" + right.ToString();
+                //    int right = 100 - left;
+                //    balance = left.ToString() + "/" + right.ToString();
 
-                    dr["Average Power Balancing (Left/Right)"] = balance;
-                    dr["Average Power Pedaling Index"] = index;
-                }
+                //    dr["Average Power Balancing (Left/Right)"] = balance;
+                //    dr["Average Power Pedaling Index"] = index;
+                //}
                 if (PowerCheck)
                 {
                     ResultList = SplitPower.ElementAt(i).ToList();
@@ -1745,20 +1797,20 @@ namespace SE_B_Assignment1
                         AverageString = AverageAlt2.ToString("0.##");
                         dr["Average Altitude (M)"] = AverageString;
                     }
-                    if (PowerBICheck)
-                    {
-                        ResultList = SplitPowerBI.ElementAt(i).ToList();
-                        int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
+                    //if (PowerBICheck)
+                    //{
+                    //    ResultList = SplitPowerBI.ElementAt(i).ToList();
+                    //    int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
 
-                        byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
-                        index2 = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+                    //    byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                    //    index2 = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
 
-                        int right = 100 - left;
-                        balance = left.ToString() + "/" + right.ToString();
+                    //    int right = 100 - left;
+                    //    balance = left.ToString() + "/" + right.ToString();
 
-                        dr["Average Power Balancing (Left/Right)"] = balance;
-                        dr["Average Power Pedaling Index"] = index2;
-                    }
+                    //    dr["Average Power Balancing (Left/Right)"] = balance;
+                    //    dr["Average Power Pedaling Index"] = index2;
+                    //}
                     if (PowerCheck)
                     {
                         ResultList = SplitPower.ElementAt(i).ToList();
@@ -1837,28 +1889,26 @@ namespace SE_B_Assignment1
 
                         dr["Average Altitude (M)"] = AverageString;
                     }
-                    if (PowerBICheck)
-                    {
-                        ResultList = SplitPowerBI.ElementAt(i).ToList();
-                        int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
+                    //if (PowerBICheck)
+                    //{
+                    //    ResultList = SplitPowerBI.ElementAt(i).ToList();
+                    //    int PowerB = (int)ResultList.Where(f => f > 0).Average(); //16 bit digit
 
-                        byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
-                        index2 = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
+                    //    byte left = (byte)(PowerB & 0xFFu); // lower 8 bits 
+                    //    index2 = (byte)((PowerB >> 8) & 0xFFu); // top 8 bits
 
-                        int right = 100 - left;
-                        balance = left.ToString() + "/" + right.ToString();
+                    //    int right = 100 - left;
+                    //    balance = left.ToString() + "/" + right.ToString();
 
-                       // dr["Average Power Balancing (Left/Right)"] = balance;
-                       // dr["Average Power Pedaling Index"] = index2;
-                    }
+                    //   // dr["Average Power Balancing (Left/Right)"] = balance;
+                    //   // dr["Average Power Pedaling Index"] = index2;
+                    //}
                     if (PowerCheck)
                     {
                         difference = AveragePower - AveragePower2;
                         AverageString = difference.ToString("0.##");
                         dr["Average Power (Watts)"] = AverageString;
-                    }
-                    if (PowerBICheck)
-                    {
+
                         difference = NormalPowerCalc - NormalPowerCalc2;
                         AverageString = difference.ToString("0.##");
 
